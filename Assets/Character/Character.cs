@@ -24,8 +24,6 @@ public class Character : MonoBehaviour
 
     private Vector3 moveDir;
 
-    private Vector3 lvl1Spawn = new Vector3(340, 105, 510);
-    private Vector3 mainIslandSpawn = new Vector3(-430,107,615);
 
     [SerializeField] private float jumpPower = 3f;
     private bool hasJumped, hasLanded, isFalling, isRunning, isInVehicle, isCrouching, isMoving, isSitting, isBoosted, isAbleToTeleport;
