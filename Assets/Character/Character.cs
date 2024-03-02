@@ -222,7 +222,7 @@ public class Character : MonoBehaviour
             isFalling = false;
             //animator.SetBool("isGrounded", hasLanded);
             //animator.SetBool("isFalling", isFalling);
-            Debug.Log("Landed");
+           // Debug.Log("Landed");
             hasLanded = false;
         }
 
@@ -237,14 +237,14 @@ public class Character : MonoBehaviour
                 //animator.SetBool("isJumping", hasJumped);
                 //animator.SetBool("isGrounded", hasLanded);
                 //animator.SetBool("isFalling", isFalling);
-                Debug.Log("Landed");
+                //Debug.Log("Landed");
                 
             }
             else
             {
                 isFalling = true;
                 //animator.SetBool("isFalling", isFalling);
-                Debug.Log("Falling...");
+               // Debug.Log("Falling...");
             }
         }
 
@@ -320,20 +320,20 @@ public class Character : MonoBehaviour
         
         if (context.canceled && !context.performed)
         {
-            Debug.Log("WASD released");
+     //       Debug.Log("WASD released");
 
             //animator.SetBool("isWalking", false);
             isMoving = false;
             if (isCrouching && !isMoving)
             {
-                Debug.Log("Not Crouch Walking");
+            //    Debug.Log("Not Crouch Walking");
                 //animator.SetBool("isCrouchWalking", false);
                 speed = speedTemp;
             }
         }
         if (context.started && !context.performed)
         {
-            Debug.Log("WASD pressed...");
+        //    Debug.Log("WASD pressed...");
             //animator.SetBool("isWalking", true);
             isMoving = true;
             
@@ -341,7 +341,7 @@ public class Character : MonoBehaviour
         }
         
         input = context.ReadValue<Vector2>();
-        Debug.Log(input);
+      //  Debug.Log(input);
         move = new Vector3(input.x, 0, input.y);
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
@@ -352,7 +352,7 @@ public class Character : MonoBehaviour
 
         if (context.performed && !hasJumped)
         {
-            Debug.Log("Jump pressed");
+          //  Debug.Log("Jump pressed");
             hasJumped = true;
             hasLanded = false;
             isFalling = true;
@@ -382,7 +382,7 @@ public class Character : MonoBehaviour
     {
         if (context.started)
         {
-            Debug.Log("Player is Running...");
+          //  Debug.Log("Player is Running...");
             isRunning = true;
             isMoving = true;
             //animator.SetBool("isRunning", isRunning);
@@ -390,7 +390,7 @@ public class Character : MonoBehaviour
         }
         if(context.canceled && !context.performed)
         {
-            Debug.Log("Player isn't Running...");
+          //  Debug.Log("Player isn't Running...");
             isRunning = false;
             isMoving = false;
             //animator.SetBool("isRunning", isRunning);
