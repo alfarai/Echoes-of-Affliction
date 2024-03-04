@@ -8,8 +8,8 @@ public class Character : MonoBehaviour
 {
 
     private StaminaManager staminaManager;
-
-
+    public Vector3 objectPosition;
+    public bool isOnTeleportZone = false;
     public static event Action onJump;
     private Animator animator;
     private Vector2 input;
@@ -67,6 +67,7 @@ public class Character : MonoBehaviour
         camera = cameraObj.GetComponent<Camera>();
 
         staminaManager = GetComponent<StaminaManager>();
+        objectPosition = transform.position;
         //boss = skeletonBossObj.GetComponent<SkeletonBoss>();
     }
     private void LateUpdate()
@@ -83,7 +84,7 @@ public class Character : MonoBehaviour
         {
             speed = walkingSpeed;
         }
-      
+
         /*
         bloodParticles.transform.position = transform.position;
         if (hp != hpScript.GetHP()) //compare old hp initialized from Start() to current hp, if it changed, emit blood
@@ -157,8 +158,11 @@ public class Character : MonoBehaviour
             
         }
         */
-
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKey(KeyCode.Q) && isOnTeleportZone)
+        {
+            climbLocation();
+        }
+            if (Input.GetKeyDown(KeyCode.C))
         {
             
 
@@ -273,10 +277,15 @@ public class Character : MonoBehaviour
         
     }
 
+
+
     
-
-   
-
+    public void climbLocation()
+    {
+        Debug.Log("hel");
+        transform.position = objectPosition;
+      
+    }
 
    
    
