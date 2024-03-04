@@ -6,12 +6,16 @@ using System;
 
 public class Character : MonoBehaviour
 {
+
+    private StaminaManager staminaManager;
+
+
     public static event Action onJump;
     private Animator animator;
     private Vector2 input;
     private CharacterController characterController;
 
-    [SerializeField] private float speed = 5f, runSpeed = 3f;
+    [SerializeField] private float speed = 5f, walkingSpeed = 5f, runSpeed = 3f;
 
     [SerializeField] private float smoothTime = 0.05f;
     private float currentVelocity;
@@ -61,8 +65,8 @@ public class Character : MonoBehaviour
         //animator = GetComponentInChildren<Animator>();
         characterController = GetComponent<CharacterController>();
         camera = cameraObj.GetComponent<Camera>();
-        
 
+        staminaManager = GetComponent<StaminaManager>();
         //boss = skeletonBossObj.GetComponent<SkeletonBoss>();
     }
     private void LateUpdate()
@@ -75,7 +79,11 @@ public class Character : MonoBehaviour
         
         ApplyGravity();
         ApplyRotationAndMovement();
-
+        if (staminaManager.staminaBar.value == 0)
+        {
+            speed = walkingSpeed;
+        }
+      
         /*
         bloodParticles.transform.position = transform.position;
         if (hp != hpScript.GetHP()) //compare old hp initialized from Start() to current hp, if it changed, emit blood
@@ -382,19 +390,26 @@ public class Character : MonoBehaviour
     {
         if (context.started)
         {
-          //  Debug.Log("Player is Running...");
+            Debug.Log("Player is Running...");
             isRunning = true;
             isMoving = true;
             //animator.SetBool("isRunning", isRunning);
-            speed += runSpeed; //isRunning is true if shift is held
+
+                speed += runSpeed; //isRunning is true if shift is held
+            
+         
+
+            staminaManager.RegenStamina(false);
+            
         }
         if(context.canceled && !context.performed)
         {
-          //  Debug.Log("Player isn't Running...");
+            Debug.Log("Player isn't Running...");
             isRunning = false;
             isMoving = false;
             //animator.SetBool("isRunning", isRunning);
             speed -= runSpeed;
+            staminaManager.RegenStamina(true);
         }
         
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
