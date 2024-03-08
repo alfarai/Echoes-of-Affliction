@@ -20,7 +20,7 @@ public class Character : MonoBehaviour
     [SerializeField] private float smoothTime = 0.05f;
     private float currentVelocity;
     private Vector3 move;
-    
+
 
     private float gravity = -9.81f;
     [SerializeField] private float gravityMultiplier = 3.0f;
@@ -33,9 +33,9 @@ public class Character : MonoBehaviour
     private bool hasJumped, hasLanded, isFalling, isRunning, isInVehicle, isCrouching, isMoving, isSitting, isBoosted, isAbleToTeleport;
 
     private float speedTemp;
-    
 
-    
+
+
 
     private float hp;
 
@@ -46,11 +46,11 @@ public class Character : MonoBehaviour
     public GameObject cameraObj;
     private Camera camera;
     private RaycastHit hit;
-    
+
     private Vector3 place;
     private bool hasClickedTPLocation;
-    
-    
+    private bool hasLeftSpawn = false;
+
     private void Awake()
     {
 
@@ -77,7 +77,7 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        
+
         ApplyGravity();
         ApplyRotationAndMovement();
         if (staminaManager.staminaBar.value == 0)
@@ -164,7 +164,7 @@ public class Character : MonoBehaviour
         }
             if (Input.GetKeyDown(KeyCode.C))
         {
-            
+
 
             if (!isCrouching)
             {
@@ -185,35 +185,35 @@ public class Character : MonoBehaviour
                 //animator.SetBool("isCrouching", false);
                 isCrouching = false;
             }
-                
+
 
         }
-       /* if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (!isSitting)
-            {
-                Debug.Log("Entering Vehicle...");
-                //animator.SetBool("isEnteringVehicle", true);
-                isSitting = true;
-            }
-            else
-            {
-                Debug.Log("Exiting Vehicle");
-                //animator.SetBool("isEnteringVehicle", false);
-                isSitting = false;
-            }
-            
-        }
-        if(isCrouching && isMoving)
-        {
-            Debug.Log("Crouch Walking...");
-            animator.SetBool("isCrouchWalking", true);
-        }
-        else if(isCrouching && !isMoving)
-        {
-            Debug.Log("Not Crouch Walking");
-            animator.SetBool("isCrouchWalking", false);
-        }*/
+        /* if (Input.GetKeyDown(KeyCode.F))
+         {
+             if (!isSitting)
+             {
+                 Debug.Log("Entering Vehicle...");
+                 //animator.SetBool("isEnteringVehicle", true);
+                 isSitting = true;
+             }
+             else
+             {
+                 Debug.Log("Exiting Vehicle");
+                 //animator.SetBool("isEnteringVehicle", false);
+                 isSitting = false;
+             }
+
+         }
+         if(isCrouching && isMoving)
+         {
+             Debug.Log("Crouch Walking...");
+             animator.SetBool("isCrouchWalking", true);
+         }
+         else if(isCrouching && !isMoving)
+         {
+             Debug.Log("Not Crouch Walking");
+             animator.SetBool("isCrouchWalking", false);
+         }*/
 
 
         //check if player is falling
@@ -227,14 +227,14 @@ public class Character : MonoBehaviour
             //animator.SetBool("isFalling", isFalling);
         }
         //check if player landed
-        if(characterController.isGrounded && isFalling)
+        if (characterController.isGrounded && isFalling)
         {
-            
+
             hasLanded = true;
             isFalling = false;
             //animator.SetBool("isGrounded", hasLanded);
             //animator.SetBool("isFalling", isFalling);
-           // Debug.Log("Landed");
+            // Debug.Log("Landed");
             hasLanded = false;
         }
 
@@ -250,17 +250,17 @@ public class Character : MonoBehaviour
                 //animator.SetBool("isGrounded", hasLanded);
                 //animator.SetBool("isFalling", isFalling);
                 //Debug.Log("Landed");
-                
+
             }
             else
             {
                 isFalling = true;
                 //animator.SetBool("isFalling", isFalling);
-               // Debug.Log("Falling...");
+                // Debug.Log("Falling...");
             }
         }
 
-        
+
 
 
 
@@ -268,13 +268,13 @@ public class Character : MonoBehaviour
 
     private void OnEnable()
     {
-        
-        
+
+
     }
 
     private void OnDisable()
     {
-        
+
     }
 
 
@@ -287,8 +287,11 @@ public class Character : MonoBehaviour
       
     }
 
-   
-   
+
+
+
+
+
 
     private void ApplyRotationAndMovement()
     {
@@ -298,7 +301,7 @@ public class Character : MonoBehaviour
             return;
         }
 
-        
+
         //face direction of movement
         var targetAngle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg + cam.eulerAngles.y; //find angle require to move to get to point (x,y). cam.eulerangles.y takes into account cam rotation
         var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref currentVelocity, smoothTime); //smooth angle so it wont snap
@@ -332,33 +335,33 @@ public class Character : MonoBehaviour
     //this method is called in playerinput object events
     public void Move(InputAction.CallbackContext context)
     {
-        
-        
-        
+
+
+
         if (context.canceled && !context.performed)
         {
-     //       Debug.Log("WASD released");
+            //       Debug.Log("WASD released");
 
             //animator.SetBool("isWalking", false);
             isMoving = false;
             if (isCrouching && !isMoving)
             {
-            //    Debug.Log("Not Crouch Walking");
+                //    Debug.Log("Not Crouch Walking");
                 //animator.SetBool("isCrouchWalking", false);
                 speed = speedTemp;
             }
         }
         if (context.started && !context.performed)
         {
-        //    Debug.Log("WASD pressed...");
+            //    Debug.Log("WASD pressed...");
             //animator.SetBool("isWalking", true);
             isMoving = true;
-            
+
 
         }
-        
+
         input = context.ReadValue<Vector2>();
-      //  Debug.Log(input);
+        //  Debug.Log(input);
         move = new Vector3(input.x, 0, input.y);
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
@@ -369,7 +372,7 @@ public class Character : MonoBehaviour
 
         if (context.performed && !hasJumped)
         {
-          //  Debug.Log("Jump pressed");
+            //  Debug.Log("Jump pressed");
             hasJumped = true;
             hasLanded = false;
             isFalling = true;
@@ -377,8 +380,8 @@ public class Character : MonoBehaviour
             //animator.SetBool("isGrounded", hasLanded);
             verticalVelocity += jumpPower;
         }
-        
-        
+
+
         /*if (context.performed) && hasJumped)
         {
             Debug.Log("In air...");
@@ -390,7 +393,7 @@ public class Character : MonoBehaviour
             hasJumped = false;
             //animator.SetBool("isJumping", false);
         }*/
-        
+
 
 
 
@@ -404,14 +407,14 @@ public class Character : MonoBehaviour
             isMoving = true;
             //animator.SetBool("isRunning", isRunning);
 
-                speed += runSpeed; //isRunning is true if shift is held
-            
-         
+            speed += runSpeed; //isRunning is true if shift is held
+
+
 
             staminaManager.RegenStamina(false);
-            
+
         }
-        if(context.canceled && !context.performed)
+        if (context.canceled && !context.performed)
         {
             Debug.Log("Player isn't Running...");
             isRunning = false;
@@ -420,9 +423,30 @@ public class Character : MonoBehaviour
             speed -= runSpeed;
             staminaManager.RegenStamina(true);
         }
-        
+
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
     }
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "SpawnCP")
+        {
+            Debug.Log("Player entered Spawn");
+            
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "SpawnCP")
+        {
+            Debug.Log("Player exited Spawn");
+            hasLeftSpawn = true;
+        }
+
+    }
+    public bool GetHasLeftSpawn()
+    {
+        return hasLeftSpawn;
+    }
 }
