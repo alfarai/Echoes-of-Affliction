@@ -49,7 +49,8 @@ public class Character : MonoBehaviour
 
     private Vector3 place;
     private bool hasClickedTPLocation;
-    private bool hasLeftSpawn = false;
+
+    private bool hasLeftSpawn = false, hasReachedLobby = false;
 
     private void Awake()
     {
@@ -434,6 +435,12 @@ public class Character : MonoBehaviour
             Debug.Log("Player entered Spawn");
             
         }
+        if (other.tag == "LobbyCP")
+        {
+            Debug.Log("Player entered Lobby");
+            hasReachedLobby = true;
+
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -443,10 +450,19 @@ public class Character : MonoBehaviour
             Debug.Log("Player exited Spawn");
             hasLeftSpawn = true;
         }
+        if (other.tag == "LobbyCP")
+        {
+            Debug.Log("Player exited Lobby");
+
+        }
 
     }
     public bool GetHasLeftSpawn()
     {
         return hasLeftSpawn;
+    }
+    public bool GetHasReachedLobby()
+    {
+        return hasReachedLobby;
     }
 }

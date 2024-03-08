@@ -21,7 +21,7 @@ public class ObjectiveManager : MonoBehaviour
     void Update()
     {
         
-        Debug.Log(objectives[0].isGoalComplete());
+        //Debug.Log(objectives[0].isGoalComplete());
     }
 
     
