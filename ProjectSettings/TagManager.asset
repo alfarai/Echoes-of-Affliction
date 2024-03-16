@@ -6,6 +6,10 @@ TagManager:
   tags:
   - SpawnCP
   - LobbyCP
+  - GapCP
+  - Plank
+  - EmptyObj
+  - PlankCP
   layers:
   - Default
   - TransparentFX

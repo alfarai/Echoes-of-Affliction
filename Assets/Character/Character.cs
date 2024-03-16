@@ -9,6 +9,7 @@ public class Character : MonoBehaviour
 
     private StaminaManager staminaManager;
     public Vector3 objectPosition;
+    public string objectHeld;
     public bool isOnTeleportZone = false;
     public static event Action onJump;
     private Animator animator;
@@ -35,9 +36,9 @@ public class Character : MonoBehaviour
     private float speedTemp;
 
 
+    
 
-
-    private float hp;
+    
 
 
     //public GameObject hpObj;
@@ -50,7 +51,7 @@ public class Character : MonoBehaviour
     private Vector3 place;
     private bool hasClickedTPLocation;
 
-    private bool hasLeftSpawn = false, hasReachedLobby = false;
+    private bool hasLeftSpawn = false, hasReachedLobby = false, isHoldingObj = false, isPlayerNearGap = false;
 
     private void Awake()
     {
@@ -441,6 +442,11 @@ public class Character : MonoBehaviour
             hasReachedLobby = true;
 
         }
+        if (other.tag == "PlankCP")
+        {
+            isPlayerNearGap = true;
+
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -455,6 +461,11 @@ public class Character : MonoBehaviour
             Debug.Log("Player exited Lobby");
 
         }
+        if (other.tag == "PlankCP")
+        {
+            isPlayerNearGap = false;
+
+        }
 
     }
     public bool GetHasLeftSpawn()
@@ -464,5 +475,26 @@ public class Character : MonoBehaviour
     public bool GetHasReachedLobby()
     {
         return hasReachedLobby;
+    }
+    public void SetIsHoldingObj(bool val)
+    {
+        isHoldingObj = val;
+       /* if(isHoldingObj)
+            Debug.Log("Holding Object");
+        else
+            Debug.Log("Dropped Object");*/
+    }
+    public bool GetIsHoldingObj()
+    {
+        return isHoldingObj;
+    }
+    public void SetObjectHeld(string objName)
+    {
+        objectHeld = objName;
+        Debug.Log("Player is holding a " + objectHeld);
+    }
+    public string GetObjectHeld()
+    {
+        return objectHeld;
     }
 }
