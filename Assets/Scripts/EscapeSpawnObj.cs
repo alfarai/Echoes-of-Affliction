@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class EscapeSpawnObj : IObjective
 {
     public GameObject playerObj;
@@ -37,3 +37,4 @@ public class EscapeSpawnObj : IObjective
         }
     }
 }
+*/
