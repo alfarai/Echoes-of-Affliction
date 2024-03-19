@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1526980366}
-  m_IndirectSpecularColor: {r: 0.56516165, g: 0.63572073, b: 0.7219669, a: 1}
+  m_IndirectSpecularColor: {r: 0.5651618, g: 0.6357212, b: 0.72196776, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -15919,8 +15919,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f7ae741888f00140894373f30853d17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxStamina: 230
-  currentStamina: 230
+  maxStamina: 232.5
+  currentStamina: 232.5
   staminaRegenRate: 1.5
   runStaminaCost: 1.5
   staminaBar: {fileID: 1683632973}
