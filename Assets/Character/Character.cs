@@ -14,7 +14,10 @@ public class Character : MonoBehaviour
     public static event Action onJump;
     private Animator animator;
     private Vector2 input;
+
     private CharacterController characterController;
+    private Inventory inv;
+    private ItemsArray itemsArray;
 
     [SerializeField] private float speed = 5f, walkingSpeed = 5f, runSpeed = 3f;
 
@@ -45,13 +48,14 @@ public class Character : MonoBehaviour
     //private UpdateHP hpScript;
     public Transform cam;
     public GameObject cameraObj;
+    public GameObject itemsArrayObj;
     private Camera camera;
     private RaycastHit hit;
 
     private Vector3 place;
     private bool hasClickedTPLocation;
 
-    private bool hasLeftSpawn = false, hasReachedLobby = false, isHoldingObj = false, isPlayerNearGap = false;
+    private bool hasLeftSpawn = false, hasReachedLobby = false, isHoldingObj = false, isPlayerOnPlaceable = false;
 
     private void Awake()
     {
@@ -67,10 +71,11 @@ public class Character : MonoBehaviour
         //animator = GetComponentInChildren<Animator>();
         characterController = GetComponent<CharacterController>();
         camera = cameraObj.GetComponent<Camera>();
-
+        inv = GetComponent<Inventory>();
+        itemsArray = itemsArrayObj.GetComponent<ItemsArray>();
         staminaManager = GetComponent<StaminaManager>();
         objectPosition = transform.position;
-        //boss = skeletonBossObj.GetComponent<SkeletonBoss>();
+        
     }
     private void LateUpdate()
     {
@@ -87,79 +92,7 @@ public class Character : MonoBehaviour
             speed = walkingSpeed;
         }
 
-        /*
-        bloodParticles.transform.position = transform.position;
-        if (hp != hpScript.GetHP()) //compare old hp initialized from Start() to current hp, if it changed, emit blood
-        {
-            hp = hpScript.GetHP(); //reset hp to current
-            bloodParticles.SetActive(true);
-            Invoke("DisableBlood", 1.5f);
-        }
-
-        if (hasClickedTPLocation) //is player has clicked on a spot to tp, force player position to go at new place. not doing this doesn't tp the player for some reason so just force it.
-        {
-            if((transform.position - place).magnitude > 1)
-            {
-                transform.position = place;
-            }
-            else
-            {
-                
-                hasClickedTPLocation = false;
-            }
-        }
-        if (isAbleToTeleport)
-        {
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
-            teleportParticles.transform.position = transform.position;
-            if (Input.GetMouseButtonDown(0))
-            {
-                Debug.Log("LMB Pressed!");
-                Vector3 v = transform.position;
-                v.y -= 1f; //play particles on feet
-                teleportEffect.transform.position = v;
-                teleportEffect.SetActive(true);
-
-
-                ray = camera.ScreenPointToRay(new Vector3(Input.mousePosition.x,Input.mousePosition.y,camera.nearClipPlane));
-
-                if (Physics.Raycast(ray, out hit))
-                {
-                    Invoke("TeleportToPos", 2f);
- 
-                    
-                }
-            }
-            tpTimeTemp -= Time.deltaTime;
-            if (tpTimeTemp < 0)
-            {
-                isAbleToTeleport = false;
-                teleportParticles.SetActive(false);
-                tpTimeTemp = teleportTime;
-                //Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-                
-        }
         
-
-        if (isBoosted)
-        {
-            speedBoostParticles.transform.position = transform.position;
-            if(boostTimeTemp > 0)
-            {
-                boostTimeTemp -= Time.deltaTime;
-            }
-            else
-            {
-                boostTimeTemp = boostTime;
-                isBoosted = false;
-                RemoveBoost();
-            }
-            
-        }
-        */
         if (Input.GetKey(KeyCode.Q) && isOnTeleportZone)
         {
             climbLocation();
@@ -444,7 +377,7 @@ public class Character : MonoBehaviour
         }
         if (other.tag == "PlankCP")
         {
-            isPlayerNearGap = true;
+            isPlayerOnPlaceable = true;
 
         }
     }
@@ -463,10 +396,14 @@ public class Character : MonoBehaviour
         }
         if (other.tag == "PlankCP")
         {
-            isPlayerNearGap = false;
+            isPlayerOnPlaceable = false;
 
         }
 
+    }
+    public bool GetIsPlayerOnPlaceable()
+    {
+        return isPlayerOnPlaceable;
     }
     public bool GetHasLeftSpawn()
     {
@@ -488,13 +425,50 @@ public class Character : MonoBehaviour
     {
         return isHoldingObj;
     }
-    public void SetObjectHeld(string objName)
+    public void HoldObject(string objName)
     {
+        if(objName == "EmptyObj")
+        {
+            isHoldingObj = false;
+        }
+        else
+        {
+            isHoldingObj = true;
+        }
+
         objectHeld = objName;
         Debug.Log("Player is holding a " + objectHeld);
+
+        if(objectHeld == "EmptyObj")
+        {
+            return;
+        }
+        //add to inventory
+        inv.Add(itemsArray.interactables.Find(item => item.name == objectHeld));
+            
+        
+    }
+    public void DropObjectHeld()
+    {
+        //remove from inventory       
+        inv.Remove(itemsArray.interactables.Find(item=> item.name == objectHeld));
+        
+        
+
+        HoldObject("EmptyObj");
     }
     public string GetObjectHeld()
     {
         return objectHeld;
     }
 }
+/*
+ Interactables that can be put in inventory must have an item data under scripts>inventory>items
+ These item data must then be put in the hierarchy under Player>inventory interactables then drag and drop the item data into the array. This serves as the item data database, which lists props
+    that can be placed into inventory.
+
+ For placeable interactions, the naming convention must be [name of game object that matches placeable]Placeable.
+    For example, we have a PlankPlaceable interaction in the first level and we need a Plank for it. The naming must be consistent. If we have ShortPlankPlaceable, we need ShortPlank for it.
+
+TODO: select inventory item with 1 or 2, then point objectHeld to whatever is focused.
+ */

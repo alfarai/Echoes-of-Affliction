@@ -8,8 +8,7 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     private Character player;
     public void Interact()
     {
-        player.SetIsHoldingObj(true);
-        player.SetObjectHeld(gameObject.name);
+        player.HoldObject(gameObject.name);
         
     }
 

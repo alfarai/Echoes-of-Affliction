@@ -25,29 +25,53 @@ public class Interactor : MonoBehaviour
         //Ray ray = cam.ScreenPointToRay(pos);
         //Debug.DrawRay(ray.origin, ray.direction * InteractRange,Color.green);
         Debug.DrawRay(transform.position, cam.transform.forward * InteractRange, Color.green);
-        /*if (Input.GetKeyDown(KeyCode.E) && player.GetIsHoldingObj())
-        {
-            player.SetIsHoldingObj(false);
-            player.SetObjectHeld(GameObject.FindWithTag("EmptyObj"));
-
-        }*/
+        RaycastHit hitInfo;
         if (Input.GetKeyDown(KeyCode.E))
         {
-
-            Ray r = new Ray(transform.position, cam.transform.forward * InteractRange);
-            RaycastHit hitInfo;
-
-
-            if (Physics.Raycast(r, out hitInfo))
+            //if player is holding an object and is on top of a placeable interaction, cast ray down to ensure interaction.
+            //in place interaction
+            if (player.GetIsPlayerOnPlaceable())
             {
-                if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj))
+                Ray r = new Ray(transform.position, -Vector3.up * InteractRange);
+                
+
+
+                if (Physics.Raycast(r, out hitInfo))
                 {
-                    interactObj.Interact();
-                    
+                    if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj))
+                    {
+                        interactObj.Interact();
+
+                    }
                 }
             }
+            else if (Physics.Raycast(new Ray(transform.position, cam.transform.forward * InteractRange), out hitInfo) & hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj))
+            {
+                
+                    interactObj.Interact();
 
+                
+                //player.DropObjectHeld();
+            }
+            //basic interact
+            else if (player.GetIsHoldingObj())
+            {
+                player.DropObjectHeld();
+                //Ray r = new Ray(transform.position, cam.transform.forward * InteractRange);
+
+
+
+                /*if (Physics.Raycast(r, out hitInfo))
+                {
+                    if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj))
+                    {
+                        interactObj.Interact();
+
+                    }
+                }*/
+            }
         }
+        
         
     }
 }

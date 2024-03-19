@@ -8,12 +8,18 @@ public class Inventory : MonoBehaviour
     public List<InventoryItem> inventory = new List<InventoryItem>();
     private Dictionary<ItemData, InventoryItem> itemDictionary = new Dictionary<ItemData, InventoryItem>();
 
+
+    void Start()
+    {
+        //Debug.Log(inventory[0].itemData.displayName);
+    }
     public void Add(ItemData itemData)
     {
         if (itemDictionary.TryGetValue(itemData, out InventoryItem item))
         {
-            item.AddToInventory();
-            Debug.Log($"{item.itemData.displayName}'s count is now: {item.itemSize}");
+            /*item.AddToInventory();
+            Debug.Log($"{item.itemData.displayName}'s count is now: {item.itemSize}");*/
+            Debug.Log($"{ item.itemData.displayName} is already in inventory!");
 
         }
         else
@@ -24,7 +30,7 @@ public class Inventory : MonoBehaviour
             inventory.Add(newItem);
 
             itemDictionary.Add(itemData, newItem);
-            Debug.Log($"Added new {itemData.displayName} x1 to the inventory!");
+            Debug.Log($"Added {itemData.displayName} to the inventory!");
         }
     }
 
