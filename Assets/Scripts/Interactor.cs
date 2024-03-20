@@ -45,6 +45,7 @@ public class Interactor : MonoBehaviour
                     }
                 }
             }
+            //if raycast hit an interactable object
             else if (Physics.Raycast(new Ray(transform.position, cam.transform.forward * InteractRange), out hitInfo) & hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj))
             {
                 
@@ -54,22 +55,11 @@ public class Interactor : MonoBehaviour
                 //player.DropObjectHeld();
             }
             //basic interact
-            else if (player.GetIsHoldingObj())
+            /*else if (player.GetIsHoldingObj())
             {
                 player.DropObjectHeld();
-                //Ray r = new Ray(transform.position, cam.transform.forward * InteractRange);
-
-
-
-                /*if (Physics.Raycast(r, out hitInfo))
-                {
-                    if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj))
-                    {
-                        interactObj.Interact();
-
-                    }
-                }*/
-            }
+                
+            }*/
         }
         
         

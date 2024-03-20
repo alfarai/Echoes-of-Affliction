@@ -14,6 +14,10 @@ public class InventoryItem
         itemData = item;
         AddToInventory();
     }
+    public string GetItemDataName()
+    {
+        return itemData.displayName;
+    }
 
     public void AddToInventory()
     {

@@ -8,54 +8,41 @@ public class Character : MonoBehaviour
 {
 
     private StaminaManager staminaManager;
-    public Vector3 objectPosition;
-    public string objectHeld;
-    public bool isOnTeleportZone = false;
-    public static event Action onJump;
-    private Animator animator;
-    private Vector2 input;
-
     private CharacterController characterController;
     private Inventory inv;
     private ItemsArray itemsArray;
+    private Vector3 place;
+    private bool hasClickedTPLocation;
+    private Camera camera;
+    private RaycastHit hit;
+    private Animator animator;
 
-    [SerializeField] private float speed = 5f, walkingSpeed = 5f, runSpeed = 3f;
-
-    [SerializeField] private float smoothTime = 0.05f;
-    private float currentVelocity;
+    private Vector2 input;
     private Vector3 move;
-
-
-    private float gravity = -9.81f;
-    [SerializeField] private float gravityMultiplier = 3.0f;
-    private float verticalVelocity;
-
     private Vector3 moveDir;
 
 
-    [SerializeField] private float jumpPower = 3f;
-    private bool hasJumped, hasLanded, isFalling, isRunning, isInVehicle, isCrouching, isMoving, isSitting, isBoosted, isAbleToTeleport;
 
+    private float gravity = -9.81f;
+
+    private float verticalVelocity;
+    private float currentVelocity;
+    private bool hasJumped, hasLanded, isFalling, isRunning, isInVehicle, isCrouching, isMoving, isSitting, isBoosted, isAbleToTeleport;
+    private bool hasLeftSpawn = false, hasReachedLobby = false, isHoldingObj = false, isPlayerOnPlaceable = false;
     private float speedTemp;
 
+    public Vector3 objectPosition;
+    public string objectHeld = "EmptyObj";
+    public bool isOnTeleportZone = false;
+    public static event Action onJump;
 
-    
-
-    
-
-
-    //public GameObject hpObj;
-    //private UpdateHP hpScript;
     public Transform cam;
     public GameObject cameraObj;
     public GameObject itemsArrayObj;
-    private Camera camera;
-    private RaycastHit hit;
-
-    private Vector3 place;
-    private bool hasClickedTPLocation;
-
-    private bool hasLeftSpawn = false, hasReachedLobby = false, isHoldingObj = false, isPlayerOnPlaceable = false;
+    [SerializeField] private float smoothTime = 0.05f;
+    [SerializeField] private float speed = 5f, walkingSpeed = 5f, runSpeed = 3f;
+    [SerializeField] private float gravityMultiplier = 3.0f;
+    [SerializeField] private float jumpPower = 3f;
 
     private void Awake()
     {
@@ -75,7 +62,7 @@ public class Character : MonoBehaviour
         itemsArray = itemsArrayObj.GetComponent<ItemsArray>();
         staminaManager = GetComponent<StaminaManager>();
         objectPosition = transform.position;
-        
+
     }
     private void LateUpdate()
     {
@@ -91,13 +78,26 @@ public class Character : MonoBehaviour
         {
             speed = walkingSpeed;
         }
+        if (Input.mouseScrollDelta.y > 0)
+        {
+            //Debug.Log("scrolling up");
+            inv.MovePointerBackward();
+        }
+        else if (Input.mouseScrollDelta.y < 0)
+        {
+            //Debug.Log("scrolling down");
+            inv.MovePointerForward();
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            DropObjectHeld();
+        }
 
-        
         if (Input.GetKey(KeyCode.Q) && isOnTeleportZone)
         {
             climbLocation();
         }
-            if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C))
         {
 
 
@@ -214,12 +214,12 @@ public class Character : MonoBehaviour
 
 
 
-    
+
     public void climbLocation()
     {
         Debug.Log("hel");
         transform.position = objectPosition;
-      
+
     }
 
 
@@ -362,12 +362,13 @@ public class Character : MonoBehaviour
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "SpawnCP")
         {
             Debug.Log("Player entered Spawn");
-            
+
         }
         if (other.tag == "LobbyCP")
         {
@@ -413,54 +414,61 @@ public class Character : MonoBehaviour
     {
         return hasReachedLobby;
     }
-    public void SetIsHoldingObj(bool val)
-    {
-        isHoldingObj = val;
-       /* if(isHoldingObj)
-            Debug.Log("Holding Object");
-        else
-            Debug.Log("Dropped Object");*/
-    }
+
     public bool GetIsHoldingObj()
     {
         return isHoldingObj;
     }
+    /*
+     When player clicks e, for hold interactions, we grab the gameobject's name in the editor, then pass it to HoldObject().
+     Ensure that we have a non empty object before adding to inventory. If it is an empty object, we are not holding anything, then return
+        - EmptyObj occurs when focused inventory slot is empty
+
+     */
     public void HoldObject(string objName)
     {
-        if(objName == "EmptyObj")
+        if (objName == "EmptyObj")
         {
             isHoldingObj = false;
+            return;
         }
         else
         {
             isHoldingObj = true;
         }
 
-        objectHeld = objName;
-        Debug.Log("Player is holding a " + objectHeld);
-
-        if(objectHeld == "EmptyObj")
-        {
-            return;
-        }
         //add to inventory
-        inv.Add(itemsArray.interactables.Find(item => item.name == objectHeld));
-            
-        
+        inv.Add(itemsArray.interactables.Find(item => item.name == objName));
+
+
     }
+    /* When dropping an object, we get the item on focused inventory slot. If it is empty, we don't have any items to drop
+     * otherwise, remove it from our inventory
+     */
     public void DropObjectHeld()
     {
+        objectHeld = GetObjectHeld();
+        if(objectHeld == "EmptyObj")
+        {
+            Debug.Log("No items to drop!");
+            return;
+        }
         //remove from inventory       
-        inv.Remove(itemsArray.interactables.Find(item=> item.name == objectHeld));
-        
-        
-
-        HoldObject("EmptyObj");
+        inv.Remove(itemsArray.interactables.Find(item => item.name == objectHeld));
+        Debug.Log("Dropped " + objectHeld);
     }
+    //retrieves item on focused inventory slot
     public string GetObjectHeld()
     {
-        return objectHeld;
+        return inv.GetActiveItem();
     }
+    /*public void SetObjectHeld()
+    {
+
+        objectHeld = inv.GetActiveItem();
+        Debug.Log("Player is holding a " + objectHeld);
+
+    }*/
 }
 /*
  Interactables that can be put in inventory must have an item data under scripts>inventory>items
@@ -470,5 +478,4 @@ public class Character : MonoBehaviour
  For placeable interactions, the naming convention must be [name of game object that matches placeable]Placeable.
     For example, we have a PlankPlaceable interaction in the first level and we need a Plank for it. The naming must be consistent. If we have ShortPlankPlaceable, we need ShortPlank for it.
 
-TODO: select inventory item with 1 or 2, then point objectHeld to whatever is focused.
  */

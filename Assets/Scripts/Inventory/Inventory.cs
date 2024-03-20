@@ -8,6 +8,9 @@ public class Inventory : MonoBehaviour
     public List<InventoryItem> inventory = new List<InventoryItem>();
     private Dictionary<ItemData, InventoryItem> itemDictionary = new Dictionary<ItemData, InventoryItem>();
 
+    private int pointer = 0;
+    public int maxSize = 2;
+
 
     void Start()
     {
@@ -24,13 +27,22 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            InventoryItem newItem = new InventoryItem(itemData);
+            if(inventory.Count < maxSize)
+            {
+                InventoryItem newItem = new InventoryItem(itemData);
 
-            //it's me hi im the problem its me
-            inventory.Add(newItem);
+                //it's me hi im the problem its me
+                inventory.Add(newItem);
+                pointer = inventory.Count - 1; //object held is set automatically once item is added
 
-            itemDictionary.Add(itemData, newItem);
-            Debug.Log($"Added {itemData.displayName} to the inventory!");
+                itemDictionary.Add(itemData, newItem);
+                Debug.Log($"Added {itemData.displayName} to the inventory!");
+            }
+            else
+            {
+                Debug.Log("Inventory is full!");
+            }
+            
         }
     }
 
@@ -45,6 +57,29 @@ public class Inventory : MonoBehaviour
                 itemDictionary.Remove(itemData);
             }
         }
+    }
+    //call this to know current object being held
+    public string GetActiveItem()
+    {
+        //check first if pointer is pointing on empty slot, or inventory is empty. If so, return EmptyObj
+        if(inventory.Count == 0 || pointer >= inventory.Count)
+        {
+            return "EmptyObj";
+        }
+        
+        return inventory[pointer].GetItemDataName();
+    }
+    public void MovePointerForward()
+    {
+        ++pointer;
+        pointer %= maxSize;
+        Debug.Log("Pointer is at " + pointer);
+    }
+    public void MovePointerBackward()
+    {
+        --pointer;
+        pointer = (pointer + maxSize) % maxSize; //c# modulo with negative number doesn't work as expected
+        Debug.Log("Pointer is at " + pointer);
     }
 
     public InventoryItem GetInventoryItem(ItemData itemData)
