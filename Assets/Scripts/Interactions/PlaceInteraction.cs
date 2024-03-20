@@ -24,12 +24,16 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
 
             //place object held to template by setting position
             Debug.Log("Placed Object");
-            GameObject obj = GameObject.Find(player.GetObjectHeld());
+            GameObject obj = player.itemsArrayObj.GetComponent<ItemsArray>().itemGameObjects.Find(x => x.name == player.GetObjectHeld());
+            if (!obj.activeSelf)
+            {
+                obj.SetActive(true);
+            }
             obj.transform.position = template.transform.position;
             obj.transform.rotation = template.transform.rotation;
 
             //remove object held
-            player.DropObjectHeld();
+            player.DropObjectHeld(true); 
             return;
         }
         //add else here for if it doesnt match

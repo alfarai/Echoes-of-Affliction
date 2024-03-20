@@ -90,7 +90,7 @@ public class Character : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
-            DropObjectHeld();
+            DropObjectHeld(false);
         }
 
         if (Input.GetKey(KeyCode.Q) && isOnTeleportZone)
@@ -440,22 +440,42 @@ public class Character : MonoBehaviour
         //add to inventory
         inv.Add(itemsArray.interactables.Find(item => item.name == objName));
 
+        //make object disappear/inactive
+        GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objName);
+        obj.SetActive(false);
 
     }
     /* When dropping an object, we get the item on focused inventory slot. If it is empty, we don't have any items to drop
      * otherwise, remove it from our inventory
      */
-    public void DropObjectHeld()
+    public void DropObjectHeld(bool isPlaced)
     {
         objectHeld = GetObjectHeld();
-        if(objectHeld == "EmptyObj")
+        if (objectHeld == "EmptyObj")
         {
             Debug.Log("No items to drop!");
             return;
         }
         //remove from inventory       
         inv.Remove(itemsArray.interactables.Find(item => item.name == objectHeld));
-        Debug.Log("Dropped " + objectHeld);
+
+
+        if (!isPlaced)
+        {
+            //make object reappear beside player
+            GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objectHeld);
+            obj.SetActive(true);
+
+            obj.transform.position = gameObject.transform.position;
+            obj.transform.rotation = gameObject.transform.rotation;
+
+            Debug.Log("Dropped " + objectHeld);
+        }
+        else
+        {
+            Debug.Log("Placed " + objectHeld);
+        }
+
     }
     //retrieves item on focused inventory slot
     public string GetObjectHeld()

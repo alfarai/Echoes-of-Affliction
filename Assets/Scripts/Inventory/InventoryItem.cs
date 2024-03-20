@@ -9,6 +9,8 @@ public class InventoryItem
     public ItemData itemData;
     public int itemSize;
     
+    
+
     public InventoryItem(ItemData item)
     {
         itemData = item;
@@ -18,6 +20,7 @@ public class InventoryItem
     {
         return itemData.displayName;
     }
+    
 
     public void AddToInventory()
     {
