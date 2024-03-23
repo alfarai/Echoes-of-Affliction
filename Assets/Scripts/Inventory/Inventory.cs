@@ -16,8 +16,9 @@ public class Inventory : MonoBehaviour
     {
         //Debug.Log(inventory[0].itemData.displayName);
     }
-    public void Add(ItemData itemData)
+    public bool Add(ItemData itemData)
     {
+        bool flag = false;
         if (itemDictionary.TryGetValue(itemData, out InventoryItem item))
         {
             /*item.AddToInventory();
@@ -37,6 +38,7 @@ public class Inventory : MonoBehaviour
 
                 itemDictionary.Add(itemData, newItem);
                 Debug.Log($"Added {itemData.displayName} to the inventory!");
+                flag = true;
             }
             else
             {
@@ -44,6 +46,7 @@ public class Inventory : MonoBehaviour
             }
             
         }
+        return flag;
     }
 
     public void Remove(ItemData itemData)

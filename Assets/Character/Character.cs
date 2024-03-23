@@ -438,11 +438,16 @@ public class Character : MonoBehaviour
         }
 
         //add to inventory
-        inv.Add(itemsArray.interactables.Find(item => item.name == objName));
+        if(inv.Add(itemsArray.interactables.Find(item => item.displayName.Contains(objName))))
+        {
+            //make object disappear/inactive
+            GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objName);
+            obj.SetActive(false);
+        }
+        
+        
 
-        //make object disappear/inactive
-        GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objName);
-        obj.SetActive(false);
+        
 
     }
     /* When dropping an object, we get the item on focused inventory slot. If it is empty, we don't have any items to drop
@@ -457,13 +462,13 @@ public class Character : MonoBehaviour
             return;
         }
         //remove from inventory       
-        inv.Remove(itemsArray.interactables.Find(item => item.name == objectHeld));
+        inv.Remove(itemsArray.interactables.Find(item => item.displayName.Contains(objectHeld.Trim())));
 
 
         if (!isPlaced)
         {
             //make object reappear beside player
-            GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objectHeld);
+            GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objectHeld.Trim());
             obj.SetActive(true);
 
             obj.transform.position = gameObject.transform.position;
@@ -498,4 +503,9 @@ public class Character : MonoBehaviour
  For placeable interactions, the naming convention must be [name of game object that matches placeable]Placeable.
     For example, we have a PlankPlaceable interaction in the first level and we need a Plank for it. The naming must be consistent. If we have ShortPlankPlaceable, we need ShortPlank for it.
 
+
+INTERACTION FIX:
+remove raycast functionality
+make a sphere around player that detects interactable objects. any interactables within the sphere gets outlined. 
+if player presses e, incase of 1 object, it gets interacted. otherwise if theres 2 or more objects, the nearest object from player is interacted.
  */

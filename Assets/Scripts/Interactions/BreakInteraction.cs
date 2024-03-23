@@ -5,6 +5,7 @@ using UnityEngine;
 public class BreakInteraction : MonoBehaviour, IInteractable
 {
     public GameObject playerObj;
+    public int hitsBeforeBreaking = 0;
     private Character player;
     public void Interact()
     {
@@ -19,7 +20,17 @@ public class BreakInteraction : MonoBehaviour, IInteractable
         //match breakable interaction with breakable object
         if (gameObject.name.Contains(player.GetObjectHeld()))
         {
-            Debug.Log("Object hit!");
+            --hitsBeforeBreaking;
+            //break object if 0
+            if(hitsBeforeBreaking == 0)
+            {
+                gameObject.SetActive(false);
+                Debug.Log("Object broken!");
+            }
+            else if (hitsBeforeBreaking > 0)
+            {
+                Debug.Log("Object hit! " + "(" + hitsBeforeBreaking + " left)");
+            }
 
             
         }

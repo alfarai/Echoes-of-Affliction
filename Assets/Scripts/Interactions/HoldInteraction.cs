@@ -8,6 +8,8 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     private Character player;
     public void Interact()
     {
+        Collider objCol = GetComponent<Collider>();
+        objCol.attachedRigidbody.useGravity = true;
         player.HoldObject(gameObject.name);
         
     }
