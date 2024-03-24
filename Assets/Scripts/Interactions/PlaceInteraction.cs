@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlaceInteraction : MonoBehaviour, IInteractable
 {
     public GameObject playerObj,template;
+    
+    public UnityEvent PlaceEvent;
     private Character player;
 
     public void Interact()
@@ -21,9 +24,8 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
         if (gameObject.name.Contains(player.GetObjectHeld()))
         {
             
-
+            
             //place object held to template by setting position
-            Debug.Log("Placed Object");
             GameObject obj = player.itemsArrayObj.GetComponent<ItemsArray>().itemGameObjects.Find(x => x.name == player.GetObjectHeld());
             Collider objCol = obj.GetComponent<Collider>();
             if (!obj.activeSelf)
@@ -35,7 +37,15 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
             objCol.attachedRigidbody.useGravity = false;
 
             //remove object held
-            player.DropObjectHeld(true); 
+            player.DropObjectHeld(true);
+
+
+            //set datahub values
+            DataHub.ObjectInteracted.interactedObj = gameObject;
+            DataHub.ObjectInteracted.type = "place";
+
+            //invoke place event
+            PlaceEvent.Invoke();
             return;
         }
         //add else here for if it doesnt match

@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GoToLobby : IObjective
+public class GetOutOfTheBuilding : IObjective
 {
     
     public GameObject nextObjective;
+    
 
     //complete conditions
-    private bool hasReachedLobby;
-    
-    private string label = "GOAL 2: Go to the lobby.";
+    private bool hasKeyBeenPlaced, hasBarrierBeenBroken;
+
+    private string label = "GOAL 3: Get out of the building";
 
     void Awake()
     {
@@ -19,13 +20,12 @@ public class GoToLobby : IObjective
     }
     void Update()
     {
-       
+        
     }
-    
+  
     public override void CallNextObjective()
     {
-        
-        Debug.Log("Goal 2 Completed");
+        Debug.Log("Goal 3 Completed");
         gameObject.SetActive(false);
         nextObjective.SetActive(true);
     }
@@ -37,30 +37,37 @@ public class GoToLobby : IObjective
 
     public override int GetGoalID()
     {
-        return 2;
+        return 3;
     }
-
-    public void SetHasReachedLobby()
+    public void SetHasKeyBeenPlaced()
     {
-        hasReachedLobby = true;
+        //check if KeyPlaceable interaction was successfully interacted with. 
+        if(DataHub.ObjectInteracted.interactedObj.name == "KeyPlaceable")
+        {
+            hasKeyBeenPlaced = true;
+        }
+        
     }
-
+    public void SetHasBarrierBeenBroken()
+    {
+        hasBarrierBeenBroken = true;
+    }
     public override void CompleteObjectiveCheck()
     {
         
-        if (hasReachedLobby)
+        if(hasKeyBeenPlaced && hasBarrierBeenBroken)
         {
             label = "Goal completed!";
             Invoke("CallNextObjective", 5f);
-           
+            
         }
         
         
     }
 
+
     void OnGUI()
     {
         DrawHUD();
     }
-
 }

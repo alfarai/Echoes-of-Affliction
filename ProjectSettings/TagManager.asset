@@ -10,6 +10,7 @@ TagManager:
   - Plank
   - EmptyObj
   - PlankCP
+  - Level2CP
   layers:
   - Default
   - TransparentFX

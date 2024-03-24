@@ -4,27 +4,44 @@ using UnityEngine;
 
 public class EscapeSpawnObj : IObjective
 {
-    public GameObject playerObj;
+    
     public GameObject nextObjective;
-    private Character player;
-    private bool isComplete = false, isGoalStatusShown = false;
+    
+    //compete conditions
+    private bool hasExitedSpawn;
+
     private string label = "GOAL 1: Escape the living room.";
     void Awake()
     {
-        player = playerObj.GetComponent<Character>();
 
     }
+    void Update()
+    {
+        
+    }
+    
 
     public override int GetGoalID()
     {
         return 1;
     }
 
-    public override bool isGoalComplete()
+    public void SetHasExitedSpawn()
     {
-        isComplete = player.GetHasLeftSpawn();
-        return isComplete;
+        hasExitedSpawn = true;
     }
+    public override void  CompleteObjectiveCheck()
+    {
+       
+        if (hasExitedSpawn)
+        {
+            label = "Goal completed!";
+            Invoke("CallNextObjective", 5f);
+            
+        }
+        
+    }
+    
 
     public override void DrawHUD()
     {
@@ -32,26 +49,18 @@ public class EscapeSpawnObj : IObjective
     }
     public override void CallNextObjective()
     {
-        Debug.Log("Goal 1 Completed");
+        //update ui
+        label = "Goal completed!";
+
+
+        //make next objective active
         gameObject.SetActive(false);
         nextObjective.SetActive(true);
     }
 
     void OnGUI()
     {
-        
         DrawHUD();
-
-        if (!isGoalStatusShown && isGoalComplete())
-        {
-            label = "Goal completed!";
-            isGoalStatusShown = true;
-            Invoke("CallNextObjective", 5f);
-        }
-
-
-        
-
     }
     
 }

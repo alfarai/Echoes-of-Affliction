@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using UnityEngine.Events;
 
 public class Character : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class Character : MonoBehaviour
     private float verticalVelocity;
     private float currentVelocity;
     private bool hasJumped, hasLanded, isFalling, isRunning, isInVehicle, isCrouching, isMoving, isSitting, isBoosted, isAbleToTeleport;
-    private bool hasLeftSpawn = false, hasReachedLobby = false, isHoldingObj = false, isPlayerOnPlaceable = false;
+    private bool isPlayerOnPlaceable = false;
     private float speedTemp;
 
     public Vector3 objectPosition;
@@ -43,6 +44,8 @@ public class Character : MonoBehaviour
     [SerializeField] private float speed = 5f, walkingSpeed = 5f, runSpeed = 3f;
     [SerializeField] private float gravityMultiplier = 3.0f;
     [SerializeField] private float jumpPower = 3f;
+
+    public UnityEvent ExitTrigger, EnterTrigger;
 
     private void Awake()
     {
@@ -373,7 +376,8 @@ public class Character : MonoBehaviour
         if (other.tag == "LobbyCP")
         {
             Debug.Log("Player entered Lobby");
-            hasReachedLobby = true;
+            EnterTrigger.Invoke();
+            
 
         }
         if (other.tag == "PlankCP")
@@ -388,7 +392,7 @@ public class Character : MonoBehaviour
         if (other.tag == "SpawnCP")
         {
             Debug.Log("Player exited Spawn");
-            hasLeftSpawn = true;
+            ExitTrigger.Invoke();
         }
         if (other.tag == "LobbyCP")
         {
@@ -406,36 +410,27 @@ public class Character : MonoBehaviour
     {
         return isPlayerOnPlaceable;
     }
-    public bool GetHasLeftSpawn()
-    {
-        return hasLeftSpawn;
-    }
-    public bool GetHasReachedLobby()
-    {
-        return hasReachedLobby;
-    }
-
-    public bool GetIsHoldingObj()
-    {
-        return isHoldingObj;
-    }
+    
     /*
      When player clicks e, for hold interactions, we grab the gameobject's name in the editor, then pass it to HoldObject().
      Ensure that we have a non empty object before adding to inventory. If it is an empty object, we are not holding anything, then return
         - EmptyObj occurs when focused inventory slot is empty
 
-     */
+     Interactables that can be put in inventory must have an item data under scripts>inventory>items
+     These item data must then be put in the hierarchy under Player>inventory interactables then drag and drop the item data into the array. This serves as the item data database, which lists props
+        that can be placed into inventory.
+
+     For placeable interactions, the naming convention must be [name of game object that matches placeable]Placeable.
+        For example, we have a PlankPlaceable interaction in the first level and we need a Plank for it. The naming must be consistent. If we have ShortPlankPlaceable, we need ShortPlank for it.
+
+ */
     public void HoldObject(string objName)
     {
         if (objName == "EmptyObj")
         {
-            isHoldingObj = false;
             return;
         }
-        else
-        {
-            isHoldingObj = true;
-        }
+        
 
         //add to inventory
         if(inv.Add(itemsArray.interactables.Find(item => item.displayName.Contains(objName))))
@@ -487,25 +482,10 @@ public class Character : MonoBehaviour
     {
         return inv.GetActiveItem();
     }
-    /*public void SetObjectHeld()
+    
+    public void test()
     {
+        Debug.Log("player exited spawn!");
+    }
 
-        objectHeld = inv.GetActiveItem();
-        Debug.Log("Player is holding a " + objectHeld);
-
-    }*/
 }
-/*
- Interactables that can be put in inventory must have an item data under scripts>inventory>items
- These item data must then be put in the hierarchy under Player>inventory interactables then drag and drop the item data into the array. This serves as the item data database, which lists props
-    that can be placed into inventory.
-
- For placeable interactions, the naming convention must be [name of game object that matches placeable]Placeable.
-    For example, we have a PlankPlaceable interaction in the first level and we need a Plank for it. The naming must be consistent. If we have ShortPlankPlaceable, we need ShortPlank for it.
-
-
-INTERACTION FIX:
-remove raycast functionality
-make a sphere around player that detects interactable objects. any interactables within the sphere gets outlined. 
-if player presses e, incase of 1 object, it gets interacted. otherwise if theres 2 or more objects, the nearest object from player is interacted.
- */
