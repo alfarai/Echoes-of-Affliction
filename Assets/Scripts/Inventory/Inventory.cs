@@ -11,7 +11,10 @@ public class Inventory : MonoBehaviour
     private int pointer = 0;
     public int maxSize = 2;
 
-
+    void Awake()
+    {
+        DataHub.PlayerStatus.invSlots = maxSize;
+    }
     void Start()
     {
         //Debug.Log(inventory[0].itemData.displayName);
@@ -110,6 +113,10 @@ public class Inventory : MonoBehaviour
         }
 
         return size;
+    }
+    public List<InventoryItem> GetInventory()
+    {
+        return inventory;
     }
 
     void Update()

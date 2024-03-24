@@ -45,7 +45,7 @@ public class Character : MonoBehaviour
     [SerializeField] private float gravityMultiplier = 3.0f;
     [SerializeField] private float jumpPower = 3f;
 
-    public UnityEvent ExitTrigger, EnterTrigger;
+    public UnityEvent ExitTrigger, EnterTrigger, TakeDamageEvent;
 
     private void Awake()
     {
@@ -65,6 +65,8 @@ public class Character : MonoBehaviour
         itemsArray = itemsArrayObj.GetComponent<ItemsArray>();
         staminaManager = GetComponent<StaminaManager>();
         objectPosition = transform.position;
+
+        
 
     }
     private void LateUpdate()
@@ -393,6 +395,9 @@ public class Character : MonoBehaviour
         }
         if(other.tag == "Hazard")
         {
+            DataHub.PlayerStatus.damageTaken = 10;
+            //call healthchange event
+            TakeDamageEvent.Invoke();
             Debug.Log("Player is hurt!");
         }
     }

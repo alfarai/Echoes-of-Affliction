@@ -1,30 +1,49 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+
 
 public class HealthManager: MonoBehaviour
 {
     public int maxHealth = 100;
-    public int currentHealth;
+    private int currentHealth;
 
-    public Slider healthBar;
+    
+    public UnityEvent HealthUIChangeEvent;
+    
+
 
     private void Start()
     {
-        currentHealth = maxHealth;
-        UpdateHealthBar();
+        //set max health
+        DataHub.PlayerStatus.maxHealth = maxHealth;
+
+        //set current health
+        DataHub.PlayerStatus.health = DataHub.PlayerStatus.maxHealth;
+
+        //set local current health
+        currentHealth = DataHub.PlayerStatus.health;
+
+        //init health
+        HealthUIChangeEvent.Invoke();
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage()
     {
-        Debug.Log("ouch");
-        currentHealth -= damage;
+        //Debug.Log("ouch");
+        currentHealth -= DataHub.PlayerStatus.damageTaken;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        UpdateHealthBar();
+
+        DataHub.PlayerStatus.health = currentHealth;
+        //UpdateHealthBar();
+        HealthUIChangeEvent.Invoke();
 
         if (currentHealth <= 0)
         {
+            //invoke death event
             Die();
         }
+
     }
 
     void Die()
@@ -32,10 +51,9 @@ public class HealthManager: MonoBehaviour
         // Handle player death here (e.g., restart level, game over screen, etc.)
         Debug.Log("Player died.");
     }
-
-    void UpdateHealthBar()
+    private int GetCurrentHealth()
     {
-        healthBar.value = currentHealth / (float)maxHealth;
-        healthBar.interactable = false; // Disable interactability
+        return DataHub.PlayerStatus.health;
     }
+    
 }

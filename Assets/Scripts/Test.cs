@@ -13,7 +13,7 @@ public class Test : MonoBehaviour, IInteractable
     public void Interact()
     {
 
-        playerHealth.TakeDamage(10);
+        playerHealth.TakeDamage();
 
         Debug.Log("hello");
     }
