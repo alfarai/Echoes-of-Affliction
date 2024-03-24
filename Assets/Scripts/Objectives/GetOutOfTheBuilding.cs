@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GetOutOfTheBuilding : IObjective
 {
@@ -9,18 +10,20 @@ public class GetOutOfTheBuilding : IObjective
     
 
     //complete conditions
+    //requires interaction with Large Wood and KeyPlaceable Lobby Door
     private bool hasKeyBeenPlaced, hasBarrierBeenBroken;
+    private int conditionCount = 2;
 
     private string label = "GOAL 3: Get out of the building";
 
     void Awake()
     {
-        
-
+        DataHub.ObjectiveHelper.activeObjectiveID = GetGoalID();
+        DataHub.ObjectiveHelper.conditionCount = conditionCount;
     }
     void Update()
     {
-        
+        //Debug.Log(DataHub.ObjectInteracted.interactedObj.name);
     }
   
     public override void CallNextObjective()
@@ -41,8 +44,8 @@ public class GetOutOfTheBuilding : IObjective
     }
     public void SetHasKeyBeenPlaced()
     {
-        //check if KeyPlaceable interaction was successfully interacted with. 
-        if(DataHub.ObjectInteracted.interactedObj.name == "KeyPlaceable")
+        //check if objects labelled with tag contains the required object for completion and see if player interacted with it (if it is saved in DataHub, it was recently interacted by the player 
+        if(GameObject.FindGameObjectsWithTag("Objective3").Contains(DataHub.ObjectInteracted.interactedObj))
         {
             hasKeyBeenPlaced = true;
         }
@@ -50,12 +53,16 @@ public class GetOutOfTheBuilding : IObjective
     }
     public void SetHasBarrierBeenBroken()
     {
-        hasBarrierBeenBroken = true;
+        if(GameObject.FindGameObjectsWithTag("Objective3").Contains(DataHub.ObjectInteracted.interactedObj))
+        {
+            hasBarrierBeenBroken = true;
+        }
+        
     }
     public override void CompleteObjectiveCheck()
     {
         
-        if(hasKeyBeenPlaced && hasBarrierBeenBroken)
+        if(DataHub.ObjectiveHelper.conditionCount == 0)
         {
             label = "Goal completed!";
             Invoke("CallNextObjective", 5f);

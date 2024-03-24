@@ -85,11 +85,13 @@ public class Character : MonoBehaviour
         {
             //Debug.Log("scrolling up");
             inv.MovePointerBackward();
+            objectHeld = GetObjectHeld();
         }
         else if (Input.mouseScrollDelta.y < 0)
         {
             //Debug.Log("scrolling down");
             inv.MovePointerForward();
+            objectHeld = GetObjectHeld();
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
@@ -385,6 +387,14 @@ public class Character : MonoBehaviour
             isPlayerOnPlaceable = true;
 
         }
+        if(other.tag == "Level2CP")
+        {
+            Debug.Log("loading level 2");
+        }
+        if(other.tag == "Hazard")
+        {
+            Debug.Log("Player is hurt!");
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -439,10 +449,10 @@ public class Character : MonoBehaviour
             GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objName);
             obj.SetActive(false);
         }
-        
-        
+        objectHeld = GetObjectHeld();
 
-        
+
+
 
     }
     /* When dropping an object, we get the item on focused inventory slot. If it is empty, we don't have any items to drop
@@ -450,7 +460,7 @@ public class Character : MonoBehaviour
      */
     public void DropObjectHeld(bool isPlaced)
     {
-        objectHeld = GetObjectHeld();
+        
         if (objectHeld == "EmptyObj")
         {
             Debug.Log("No items to drop!");
@@ -475,6 +485,7 @@ public class Character : MonoBehaviour
         {
             Debug.Log("Placed " + objectHeld);
         }
+        objectHeld = GetObjectHeld();
 
     }
     //retrieves item on focused inventory slot

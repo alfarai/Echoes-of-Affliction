@@ -10,4 +10,6 @@ public static class DataHub
     //game listeners read values from the datahub, game events write to data hub first before invoking an event
     //essentially acts as middle man
     public static ObjectInteracted ObjectInteracted = new ObjectInteracted();
+    public static PlayerStatus PlayerStatus = new PlayerStatus();
+    public static ObjectiveConditionHelper ObjectiveHelper = new ObjectiveConditionHelper();
 }

@@ -18,11 +18,13 @@ public class Inventory : MonoBehaviour
     }
     public bool Add(ItemData itemData)
     {
+        
         bool flag = false;
         if (itemDictionary.TryGetValue(itemData, out InventoryItem item))
         {
             /*item.AddToInventory();
             Debug.Log($"{item.itemData.displayName}'s count is now: {item.itemSize}");*/
+            
             Debug.Log($"{ item.itemData.displayName} is already in inventory!");
 
         }
@@ -42,6 +44,7 @@ public class Inventory : MonoBehaviour
             }
             else
             {
+                DataHub.PlayerStatus.isInventoryFull = true;
                 Debug.Log("Inventory is full!");
             }
             
@@ -51,11 +54,13 @@ public class Inventory : MonoBehaviour
 
     public void Remove(ItemData itemData)
     {
+
         if (itemDictionary.TryGetValue(itemData, out InventoryItem item))
         {
             item.RmvFrInventory();
             if (item.itemSize == 0)
             {
+                DataHub.PlayerStatus.isInventoryFull = false;
                 inventory.Remove(item);
                 itemDictionary.Remove(itemData);
             }

@@ -13,7 +13,7 @@ public class EscapeSpawnObj : IObjective
     private string label = "GOAL 1: Escape the living room.";
     void Awake()
     {
-
+        DataHub.ObjectiveHelper.activeObjectiveID = GetGoalID();
     }
     void Update()
     {

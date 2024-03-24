@@ -14,8 +14,7 @@ public class GoToLobby : IObjective
 
     void Awake()
     {
-        
-
+        DataHub.ObjectiveHelper.activeObjectiveID = GetGoalID();
     }
     void Update()
     {

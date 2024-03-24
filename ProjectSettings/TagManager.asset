@@ -11,6 +11,8 @@ TagManager:
   - EmptyObj
   - PlankCP
   - Level2CP
+  - Hazard
+  - ObjectiveRequirement
   layers:
   - Default
   - TransparentFX
