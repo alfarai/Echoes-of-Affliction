@@ -20,7 +20,10 @@ public class InventoryItem
     {
         return itemData.displayName;
     }
-    
+    public Sprite GetIcon()
+    {
+        return itemData.icon;
+    }
 
     public void AddToInventory()
     {

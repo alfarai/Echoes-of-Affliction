@@ -69,10 +69,7 @@ public class Character : MonoBehaviour
         
 
     }
-    private void LateUpdate()
-    {
-
-    }
+   
     // Update is called once per frame
     private void Update()
     {
@@ -83,18 +80,7 @@ public class Character : MonoBehaviour
         {
             speed = walkingSpeed;
         }
-        if (Input.mouseScrollDelta.y > 0)
-        {
-            //Debug.Log("scrolling up");
-            inv.MovePointerBackward();
-            objectHeld = GetObjectHeld();
-        }
-        else if (Input.mouseScrollDelta.y < 0)
-        {
-            //Debug.Log("scrolling down");
-            inv.MovePointerForward();
-            objectHeld = GetObjectHeld();
-        }
+        
         if (Input.GetKeyDown(KeyCode.G))
         {
             DropObjectHeld(false);
@@ -465,8 +451,8 @@ public class Character : MonoBehaviour
      */
     public void DropObjectHeld(bool isPlaced)
     {
-        
-        if (objectHeld == "EmptyObj")
+        //way to save inventory: instantiate object if it doesnt exist in scene but is in inventory
+        if (GetObjectHeld() == "EmptyObj")
         {
             Debug.Log("No items to drop!");
             return;
@@ -484,11 +470,11 @@ public class Character : MonoBehaviour
             obj.transform.position = gameObject.transform.position;
             obj.transform.rotation = gameObject.transform.rotation;
 
-            Debug.Log("Dropped " + objectHeld);
+            Debug.Log("Dropped " + GetObjectHeld());
         }
         else
         {
-            Debug.Log("Placed " + objectHeld);
+            Debug.Log("Placed " + GetObjectHeld());
         }
         objectHeld = GetObjectHeld();
 
@@ -499,9 +485,11 @@ public class Character : MonoBehaviour
         return inv.GetActiveItem();
     }
     
-    public void test()
+    //called from ChangeInventoryFocusEvent 
+    public void SetObjectHeld()
     {
-        Debug.Log("player exited spawn!");
+        objectHeld = inv.GetActiveItem();
+        Debug.Log("Focused on " + objectHeld);
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class DisplayInventoryUI : MonoBehaviour
@@ -26,7 +27,7 @@ public class DisplayInventoryUI : MonoBehaviour
         List<InventoryItem> inventory = inv.GetInventory();
         for(int i = 0; i < DataHub.PlayerStatus.invSlots; i++)
         {
-            Debug.Log(inventory[i].GetItemDataName());
+            //Debug.Log(inventory[i].GetItemDataName());
             display = inventory[i].GetItemDataName();
             if (display == null)
             {
@@ -34,6 +35,7 @@ public class DisplayInventoryUI : MonoBehaviour
             }
             
             inventorySlots[i].GetComponentInChildren<TextMeshProUGUI>().text = display;
+            inventorySlots[i].GetComponent<Image>().sprite = inventory[i].GetIcon();
         }
     }
 }

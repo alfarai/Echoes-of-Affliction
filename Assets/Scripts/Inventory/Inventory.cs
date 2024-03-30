@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Inventory : MonoBehaviour
 {
@@ -11,13 +12,35 @@ public class Inventory : MonoBehaviour
     private int pointer = 0;
     public int maxSize = 2;
 
+    public UnityEvent InventoryChangeEvent, ChangeInventoryFocusEvent;
+
     void Awake()
     {
         DataHub.PlayerStatus.invSlots = maxSize;
     }
     void Start()
     {
+        ChangeInventoryFocusEvent.Invoke(); //set first slot as focused on start
         //Debug.Log(inventory[0].itemData.displayName);
+    }
+    void Update()
+    {
+        if (Input.mouseScrollDelta.y > 0)
+        {
+            //Debug.Log("scrolling up");
+            MovePointerBackward();
+            ChangeInventoryFocusEvent.Invoke();
+            
+        }
+       if (Input.mouseScrollDelta.y < 0)
+        {
+            //Debug.Log("scrolling down");
+            MovePointerForward();
+            ChangeInventoryFocusEvent.Invoke();
+            
+            
+
+        }
     }
     public bool Add(ItemData itemData)
     {
@@ -44,6 +67,10 @@ public class Inventory : MonoBehaviour
                 itemDictionary.Add(itemData, newItem);
                 Debug.Log($"Added {itemData.displayName} to the inventory!");
                 flag = true;
+
+                DataHub.PlayerStatus.focusedSlot = pointer;
+                InventoryChangeEvent.Invoke();
+                ChangeInventoryFocusEvent.Invoke();
             }
             else
             {
@@ -61,12 +88,14 @@ public class Inventory : MonoBehaviour
         if (itemDictionary.TryGetValue(itemData, out InventoryItem item))
         {
             item.RmvFrInventory();
+            
             if (item.itemSize == 0)
             {
                 DataHub.PlayerStatus.isInventoryFull = false;
                 inventory.Remove(item);
                 itemDictionary.Remove(itemData);
             }
+            InventoryChangeEvent.Invoke();
         }
     }
     //call this to know current object being held
@@ -84,12 +113,14 @@ public class Inventory : MonoBehaviour
     {
         ++pointer;
         pointer %= maxSize;
+        DataHub.PlayerStatus.focusedSlot = pointer;
         Debug.Log("Pointer is at " + pointer);
     }
     public void MovePointerBackward()
     {
         --pointer;
         pointer = (pointer + maxSize) % maxSize; //c# modulo with negative number doesn't work as expected
+        DataHub.PlayerStatus.focusedSlot = pointer;
         Debug.Log("Pointer is at " + pointer);
     }
 
@@ -119,8 +150,5 @@ public class Inventory : MonoBehaviour
         return inventory;
     }
 
-    void Update()
-    {
-
-    }
+    
 }
