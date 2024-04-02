@@ -4,26 +4,31 @@ using UnityEngine;
 
 public class GoToLobby : IObjective
 {
-    
+
     public GameObject nextObjective;
 
-    //complete conditions
-    private bool hasReachedLobby;
     
+
     private string label = "GOAL 2: Go to the lobby.";
+    private bool isComplete;
 
     void Awake()
     {
-        DataHub.ObjectiveHelper.activeObjectiveID = GetGoalID();
+        DataHub.ObjectiveHelper.activeObjectiveID = GetObjectiveID();
+
     }
     void Update()
     {
-       
+        if (DataHub.ObjectiveHelper.hasReachedLobby && !isComplete)
+        {
+            CompleteObjective();
+        }
     }
-    
+
+
     public override void CallNextObjective()
     {
-        
+
         Debug.Log("Goal 2 Completed");
         gameObject.SetActive(false);
         nextObjective.SetActive(true);
@@ -34,27 +39,26 @@ public class GoToLobby : IObjective
         GUILayout.Label(label);
     }
 
-    public override int GetGoalID()
+    public override int GetObjectiveID()
     {
         return 2;
     }
 
     public void SetHasReachedLobby()
     {
-        hasReachedLobby = true;
+       //hasReachedLobby = true;
     }
 
-    public override void CompleteObjectiveCheck()
+    public override void CompleteObjective()
     {
-        
-        if (hasReachedLobby)
-        {
-            label = "Goal completed!";
-            Invoke("CallNextObjective", 5f);
-           
-        }
-        
-        
+
+        isComplete = true;
+        label = "Goal completed!";
+        Invoke("CallNextObjective", 5f);
+
+
+
+
     }
 
     void OnGUI()

@@ -13,6 +13,7 @@ TagManager:
   - Level2CP
   - Hazard
   - ObjectiveRequirement
+  - Holdable
   layers:
   - Default
   - TransparentFX

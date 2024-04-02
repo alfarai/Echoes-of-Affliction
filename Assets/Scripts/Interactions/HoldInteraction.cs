@@ -13,9 +13,11 @@ public class HoldInteraction : MonoBehaviour, IInteractable
         objCol.attachedRigidbody.useGravity = true;
         player.HoldObject(gameObject.name);
 
-        DataHub.ObjectInteracted.interactedObj = gameObject;
+        /*DataHub.ObjectInteracted.interactedObj = gameObject;
         DataHub.ObjectInteracted.interactable = player.GetObjectHeld();
-        DataHub.ObjectInteracted.interaction = "hold";
+        DataHub.ObjectInteracted.interaction = "hold";*/
+
+        DataHub.ObjectInteracted.objectHeld = player.GetObjectHeld();
         HoldEvent.Invoke();
         
     }

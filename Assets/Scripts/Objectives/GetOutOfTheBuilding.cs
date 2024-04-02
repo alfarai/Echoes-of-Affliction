@@ -2,35 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class GetOutOfTheBuilding : IObjective
 {
-    
-    public GameObject nextObjective;
-    
 
-    //complete conditions
-    //requires interaction with Large Wood and KeyPlaceable Lobby Door
-    private bool hasKeyBeenPlaced, hasBarrierBeenBroken;
-    private int conditionCount = 2;
+    public GameObject nextObjective;
+
+
+    private bool isComplete;
 
     private string label = "GOAL 3: Get out of the building";
 
     void Awake()
     {
-        DataHub.ObjectiveHelper.activeObjectiveID = GetGoalID();
-        DataHub.ObjectiveHelper.conditionCount = conditionCount;
+        DataHub.ObjectiveHelper.activeObjectiveID = GetObjectiveID();
+        //DataHub.ObjectiveHelper.conditionCount = conditionCount;
     }
     void Update()
     {
         //Debug.Log(DataHub.ObjectInteracted.interactedObj.name);
+        if (DataHub.ObjectiveHelper.hasKeyBeenPlaced && DataHub.ObjectiveHelper.hasBarrierBeenBroken && !isComplete)
+        {
+            CompleteObjective();
+        }
     }
-  
+
     public override void CallNextObjective()
     {
-        Debug.Log("Goal 3 Completed");
-        gameObject.SetActive(false);
-        nextObjective.SetActive(true);
+        Debug.Log("Loading Level 2");
+        /*gameObject.SetActive(false);
+        nextObjective.SetActive(true);*/
+
+        //load next level
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public override void DrawHUD()
@@ -38,38 +43,37 @@ public class GetOutOfTheBuilding : IObjective
         GUILayout.Label(label);
     }
 
-    public override int GetGoalID()
+    public override int GetObjectiveID()
     {
         return 3;
     }
     public void SetHasKeyBeenPlaced()
     {
         //check if objects labelled with tag contains the required object for completion and see if player interacted with it (if it is saved in DataHub, it was recently interacted by the player 
-        if(GameObject.FindGameObjectsWithTag("Objective3").Contains(DataHub.ObjectInteracted.interactedObj))
+        if (GameObject.FindGameObjectsWithTag("Objective3").Contains(DataHub.ObjectInteracted.interactedObj))
         {
-            hasKeyBeenPlaced = true;
+            //hasKeyBeenPlaced = true;
         }
-        
+
     }
     public void SetHasBarrierBeenBroken()
     {
-        if(GameObject.FindGameObjectsWithTag("Objective3").Contains(DataHub.ObjectInteracted.interactedObj))
+        if (GameObject.FindGameObjectsWithTag("Objective3").Contains(DataHub.ObjectInteracted.interactedObj))
         {
-            hasBarrierBeenBroken = true;
+            //hasBarrierBeenBroken = true;
         }
-        
+
     }
-    public override void CompleteObjectiveCheck()
+    public override void CompleteObjective()
     {
-        
-        if(DataHub.ObjectiveHelper.conditionCount == 0)
-        {
-            label = "Goal completed!";
-            Invoke("CallNextObjective", 5f);
-            
-        }
-        
-        
+
+        isComplete = true;
+        label = "Goal completed!";
+        Invoke("CallNextObjective", 5f);
+
+
+
+
     }
 
 

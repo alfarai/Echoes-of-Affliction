@@ -24,35 +24,33 @@ public class BreakInteraction : MonoBehaviour, IInteractable
         if (gameObject.name.Contains(player.GetObjectHeld()))
         {
             --hitsBeforeBreaking;
-
+            
 
 
             //break object if 0
             if (hitsBeforeBreaking == 0)
             {
-                // check if the interaction is tied with an objective requirement
-                if (gameObject.tag == "ObjectiveRequirement")
-                {
-                    DataHub.ObjectiveHelper.conditionCount -= 1;
-                }
+                
 
                 gameObject.SetActive(false);
                 Debug.Log("Object broken!");
+                DataHub.ObjectInteracted.objectBroken = gameObject.name;
+                BreakEvent.Invoke();
                 //breakable with loot
                 if (gameObject.tag == "loot")
                 {
-                    DataHub.ObjectInteracted.interactedObj = gameObject;
+                    /*DataHub.ObjectInteracted.interactedObj = gameObject;
                     DataHub.ObjectInteracted.interactable = player.GetObjectHeld();
-                    DataHub.ObjectInteracted.interaction = "breakloot";
+                    DataHub.ObjectInteracted.interaction = "breakloot";*/
                     BreakEvent.Invoke();
                 }
                 //breakable without loot
                 else
                 {
-                    DataHub.ObjectInteracted.interactedObj = gameObject;
+                    /*DataHub.ObjectInteracted.interactedObj = gameObject;
                     DataHub.ObjectInteracted.interactable = player.GetObjectHeld();
-                    DataHub.ObjectInteracted.interaction = "break";
-                    BreakEvent.Invoke();
+                    DataHub.ObjectInteracted.interaction = "break";*/
+                    
                 }
             }
             else if (hitsBeforeBreaking > 0)

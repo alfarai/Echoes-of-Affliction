@@ -4,44 +4,53 @@ using UnityEngine;
 
 public class EscapeSpawnObj : IObjective
 {
-    
-    public GameObject nextObjective;
-    
-    //compete conditions
-    private bool hasExitedSpawn;
 
+    public GameObject nextObjective;
+
+    
     private string label = "GOAL 1: Escape the living room.";
+    private bool isComplete;
+
+
+
+
+
+
+
     void Awake()
     {
-        DataHub.ObjectiveHelper.activeObjectiveID = GetGoalID();
+        DataHub.ObjectiveHelper.activeObjectiveID = GetObjectiveID();
+
     }
     void Update()
     {
-        
+        if (DataHub.ObjectiveHelper.hasExitedSpawn && !isComplete)
+        {
+            CompleteObjective();
+        }
     }
-    
 
-    public override int GetGoalID()
+
+    public override int GetObjectiveID()
     {
         return 1;
     }
 
     public void SetHasExitedSpawn()
     {
-        hasExitedSpawn = true;
+        //hasExitedSpawn = true;
     }
-    public override void  CompleteObjectiveCheck()
+    public override void CompleteObjective()
     {
-       
-        if (hasExitedSpawn)
-        {
-            label = "Goal completed!";
-            Invoke("CallNextObjective", 5f);
-            
-        }
-        
+
+        isComplete = true;
+        label = "Goal completed!";
+        Invoke("CallNextObjective", 5f);
+
+
+
     }
-    
+
 
     public override void DrawHUD()
     {
@@ -62,5 +71,5 @@ public class EscapeSpawnObj : IObjective
     {
         DrawHUD();
     }
-    
+
 }

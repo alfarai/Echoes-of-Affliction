@@ -4,8 +4,10 @@ using UnityEngine;
 
 public abstract class IObjective : MonoBehaviour
 {
-    public abstract int GetGoalID();
-    public abstract void CompleteObjectiveCheck();
+    
+    public abstract int GetObjectiveID();
+    
+    public abstract void CompleteObjective();
     
 
     public abstract void CallNextObjective();

@@ -358,16 +358,18 @@ public class Character : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        
+        
         if (other.tag == "SpawnCP")
         {
-            Debug.Log("Player entered Spawn");
+            //Debug.Log("Player entered Spawn");
 
         }
         if (other.tag == "LobbyCP")
         {
             Debug.Log("Player entered Lobby");
             EnterTrigger.Invoke();
-            
+
 
         }
         if (other.tag == "PlankCP")
@@ -375,25 +377,32 @@ public class Character : MonoBehaviour
             isPlayerOnPlaceable = true;
 
         }
-        if(other.tag == "Level2CP")
+        if (other.tag == "Level2CP")
         {
             Debug.Log("loading level 2");
         }
-        if(other.tag == "Hazard")
+        if (other.tag == "Hazard")
         {
             DataHub.PlayerStatus.damageTaken = 10;
             //call healthchange event
             TakeDamageEvent.Invoke();
             Debug.Log("Player is hurt!");
+            return;
         }
+        if (other.isTrigger)
+        {
+            DataHub.TriggerInteracted.lastTriggerEntered = other.gameObject.name;
+            EnterTrigger.Invoke();
+        }
+        
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.tag == "SpawnCP")
         {
-            Debug.Log("Player exited Spawn");
-            ExitTrigger.Invoke();
+            //Debug.Log("Player exited Spawn");
+            //ExitTrigger.Invoke();
         }
         if (other.tag == "LobbyCP")
         {
@@ -405,6 +414,12 @@ public class Character : MonoBehaviour
             isPlayerOnPlaceable = false;
 
         }
+        if (other.isTrigger)
+        {
+            DataHub.TriggerInteracted.lastTriggerExited = other.gameObject.name;
+            ExitTrigger.Invoke();
+        }
+        
 
     }
     public bool GetIsPlayerOnPlaceable()
@@ -434,7 +449,7 @@ public class Character : MonoBehaviour
         
 
         //add to inventory
-        if(inv.Add(itemsArray.interactables.Find(item => item.displayName.Contains(objName))))
+        if(inv.Add(itemsArray.interactables.Find(item => item.displayName.Equals(objName))))
         {
             //make object disappear/inactive
             GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objName);
@@ -458,7 +473,7 @@ public class Character : MonoBehaviour
             return;
         }
         //remove from inventory       
-        inv.Remove(itemsArray.interactables.Find(item => item.displayName.Contains(objectHeld.Trim())));
+        inv.Remove(itemsArray.interactables.Find(item => item.displayName.Equals(objectHeld.Trim())));
 
 
         if (!isPlaced)
@@ -468,9 +483,10 @@ public class Character : MonoBehaviour
             obj.SetActive(true);
 
             obj.transform.position = gameObject.transform.position;
+            
             obj.transform.rotation = gameObject.transform.rotation;
 
-            Debug.Log("Dropped " + GetObjectHeld());
+            
         }
         else
         {

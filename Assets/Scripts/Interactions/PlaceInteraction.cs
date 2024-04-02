@@ -41,15 +41,13 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
 
 
             //set datahub values
-            DataHub.ObjectInteracted.interactedObj = gameObject;
+            /*DataHub.ObjectInteracted.interactedObj = gameObject;
             DataHub.ObjectInteracted.interactable = player.GetObjectHeld();
-            DataHub.ObjectInteracted.interaction = "place";
+            DataHub.ObjectInteracted.interaction = "place";*/
 
+            DataHub.ObjectInteracted.objectPlacedOn = gameObject.name;
             //check if the interaction is tied with an objective requirement
-            if(gameObject.tag == "ObjectiveRequirement")
-            {
-                DataHub.ObjectiveHelper.conditionCount -= 1;
-            }
+            
             //invoke place event
             PlaceEvent.Invoke();
             return;

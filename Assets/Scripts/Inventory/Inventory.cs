@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class Inventory : MonoBehaviour
 {
 
-    public List<InventoryItem> inventory = new List<InventoryItem>();
+    public static List<InventoryItem> inventory = new List<InventoryItem>();
     private Dictionary<ItemData, InventoryItem> itemDictionary = new Dictionary<ItemData, InventoryItem>();
 
     private int pointer = 0;
@@ -69,6 +69,7 @@ public class Inventory : MonoBehaviour
                 flag = true;
 
                 DataHub.PlayerStatus.focusedSlot = pointer;
+                DataHub.PlayerStatus.playerInventory = inventory;
                 InventoryChangeEvent.Invoke();
                 ChangeInventoryFocusEvent.Invoke();
             }
@@ -94,7 +95,9 @@ public class Inventory : MonoBehaviour
                 DataHub.PlayerStatus.isInventoryFull = false;
                 inventory.Remove(item);
                 itemDictionary.Remove(itemData);
+                
             }
+            DataHub.PlayerStatus.playerInventory = inventory;
             InventoryChangeEvent.Invoke();
         }
     }
