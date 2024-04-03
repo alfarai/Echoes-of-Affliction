@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 public class HoldInteraction : MonoBehaviour, IInteractable
 {
-    public GameObject playerObj;
+    //public GameObject playerObj;
     public UnityEvent HoldEvent;
     private Character player;
     public void Interact()
@@ -25,7 +25,7 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     // Start is called before the first frame update
     void Start()
     {
-        player = playerObj.GetComponent<Character>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
     }
 
     // Update is called once per frame

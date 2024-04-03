@@ -20,8 +20,8 @@ public class MainMenu : MonoBehaviour
     }
     public void StartGame()
     {
-        SceneManager.LoadScene("PersistentScene");
-        SceneManager.LoadScene("Level1",LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync("PersistentScene");
+        SceneManager.LoadSceneAsync("Level1",LoadSceneMode.Additive);
     }
     
 }
