@@ -22,6 +22,7 @@ public class Character : MonoBehaviour
     private Vector3 move;
     private Vector3 moveDir;
 
+    private GameObject teleportTrigger; 
 
 
     private float gravity = -9.81f;
@@ -32,9 +33,9 @@ public class Character : MonoBehaviour
     private bool isPlayerOnPlaceable = false;
     private float speedTemp;
 
-    public Vector3 objectPosition;
+    //public Vector3 objectPosition;
     public string objectHeld = "EmptyObj";
-    public bool isOnTeleportZone = false;
+    public bool isOnTeleportZone = false, isTeleporting;
     public static event Action onJump;
 
     public Transform cam;
@@ -64,12 +65,24 @@ public class Character : MonoBehaviour
         inv = GetComponent<Inventory>();
         itemsArray = itemsArrayObj.GetComponent<ItemsArray>();
         staminaManager = GetComponent<StaminaManager>();
-        objectPosition = transform.position;
+        //objectPosition = transform.position;
 
         
 
     }
    
+    private void FixedUpdate()
+    {
+        
+        if (isOnTeleportZone && isTeleporting)
+        {
+            transform.position = teleportTrigger.transform.position;
+            isTeleporting = false;
+            
+        }
+        
+        
+    }
     // Update is called once per frame
     private void Update()
     {
@@ -85,11 +98,16 @@ public class Character : MonoBehaviour
         {
             DropObjectHeld(false);
         }
-
-        if (Input.GetKey(KeyCode.Q) && isOnTeleportZone)
+        if (Input.GetKeyDown(KeyCode.Q) && isOnTeleportZone)
         {
-            climbLocation();
+            isTeleporting = true;
         }
+        
+
+        /*if (Input.GetKeyDown(KeyCode.Q) && isOnTeleportZone)
+        {
+            GoToLocation();
+        }*/
         if (Input.GetKeyDown(KeyCode.C))
         {
 
@@ -204,20 +222,6 @@ public class Character : MonoBehaviour
     {
 
     }
-
-
-
-
-    public void climbLocation()
-    {
-        Debug.Log("hel");
-        transform.position = objectPosition;
-
-    }
-
-
-
-
 
 
 
@@ -355,32 +359,39 @@ public class Character : MonoBehaviour
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
     }
-
+    
+    private void OnTriggerStay(Collider other)
+    {
+        //for enter/exit triggers
+        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
+        {
+            if(teleportTrigger != other.gameObject.transform.GetChild(0).gameObject)
+            {
+                teleportTrigger = other.gameObject.transform.GetChild(0).gameObject;
+            }
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
+        {
+            //set label on
+            other.gameObject.transform.GetChild(1).gameObject.SetActive(true);
+            isOnTeleportZone = true;
+        }
         
         if (other.tag == "SpawnCP")
         {
             //Debug.Log("Player entered Spawn");
 
         }
-        if (other.tag == "LobbyCP")
-        {
-            Debug.Log("Player entered Lobby");
-            EnterTrigger.Invoke();
-
-
-        }
+       
         if (other.tag == "PlankCP")
         {
             isPlayerOnPlaceable = true;
 
         }
-        if (other.tag == "Level2CP")
-        {
-            Debug.Log("loading level 2");
-        }
+        
         if (other.tag == "Hazard")
         {
             DataHub.PlayerStatus.damageTaken = 10;
@@ -389,16 +400,32 @@ public class Character : MonoBehaviour
             Debug.Log("Player is hurt!");
             return;
         }
-        if (other.isTrigger)
+
+        //OBJECTIVE CONDITIONS
+        if (other.gameObject.name == "Lobby")
         {
+            DataHub.ObjectiveHelper.hasReachedLobby = true;
+        }
+
+        
+        /*if (other.isTrigger)
+        {
+            
             DataHub.TriggerInteracted.lastTriggerEntered = other.gameObject.name;
             EnterTrigger.Invoke();
-        }
+        }*/
         
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
+        {
+            //set label off
+            other.gameObject.transform.GetChild(1).gameObject.SetActive(false);
+            isOnTeleportZone = false;
+            teleportTrigger = null;
+        }
         if (other.tag == "SpawnCP")
         {
             //Debug.Log("Player exited Spawn");
@@ -414,11 +441,17 @@ public class Character : MonoBehaviour
             isPlayerOnPlaceable = false;
 
         }
-        if (other.isTrigger)
+
+        //OBJECTIVE CONDITIONS
+        if (other.gameObject.name == "Spawn")
+        {
+            DataHub.ObjectiveHelper.hasExitedSpawn = true;
+        }
+        /*if (other.isTrigger)
         {
             DataHub.TriggerInteracted.lastTriggerExited = other.gameObject.name;
             ExitTrigger.Invoke();
-        }
+        }*/
         
 
     }
@@ -488,10 +521,7 @@ public class Character : MonoBehaviour
 
             
         }
-        else
-        {
-            Debug.Log("Placed " + GetObjectHeld());
-        }
+        
         objectHeld = GetObjectHeld();
 
     }

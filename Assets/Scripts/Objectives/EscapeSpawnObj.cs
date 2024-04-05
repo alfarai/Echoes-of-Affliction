@@ -28,6 +28,10 @@ public class EscapeSpawnObj : IObjective
         {
             CompleteObjective();
         }
+        if (Input.GetKeyDown(KeyCode.Comma))
+        {
+            AutoFinish();
+        }
     }
 
 
@@ -50,7 +54,10 @@ public class EscapeSpawnObj : IObjective
 
 
     }
-
+    public override void AutoFinish()
+    {
+        CallNextObjective();
+    }
 
     public override void DrawHUD()
     {

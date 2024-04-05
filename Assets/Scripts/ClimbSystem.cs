@@ -16,7 +16,7 @@ public class ClimbSystem : MonoBehaviour
             Debug.Log("Climb destination position: " + climbDestination.position);
 
            c.isOnTeleportZone = true;
-           c.objectPosition = new Vector3(climbDestination.position.x, climbDestination.position.y, climbDestination.position.z);
+           //c.objectPosition = new Vector3(climbDestination.position.x, climbDestination.position.y, climbDestination.position.z);
 
             Debug.Log("Player teleported to climb destination.");
             Debug.Log("New player position: " + other.transform.position);

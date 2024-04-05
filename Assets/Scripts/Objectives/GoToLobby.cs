@@ -23,6 +23,10 @@ public class GoToLobby : IObjective
         {
             CompleteObjective();
         }
+        if (Input.GetKeyDown(KeyCode.Comma))
+        {
+            AutoFinish();
+        }
     }
 
 
@@ -48,7 +52,10 @@ public class GoToLobby : IObjective
     {
        //hasReachedLobby = true;
     }
-
+    public override void AutoFinish()
+    {
+        CallNextObjective();
+    }
     public override void CompleteObjective()
     {
 

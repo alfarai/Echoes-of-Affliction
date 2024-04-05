@@ -12,5 +12,6 @@ public abstract class IObjective : MonoBehaviour
 
     public abstract void CallNextObjective();
     public abstract void DrawHUD();
+    public abstract void AutoFinish();
 }
 

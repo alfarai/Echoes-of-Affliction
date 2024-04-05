@@ -8,6 +8,7 @@ public class GetOutOfTheBuilding : IObjective
 {
 
     public GameObject nextObjective;
+    public GameObject level2AccessTrigger;
 
 
     private bool isComplete;
@@ -26,16 +27,27 @@ public class GetOutOfTheBuilding : IObjective
         {
             CompleteObjective();
         }
+        if (Input.GetKeyDown(KeyCode.Comma))
+        {
+            AutoFinish();
+        }
     }
-
+    public override void AutoFinish()
+    {
+        CallNextObjective();
+    }
     public override void CallNextObjective()
     {
-        Debug.Log("Loading Level 2");
-        /*gameObject.SetActive(false);
-        nextObjective.SetActive(true);*/
+        
+        //exit building trigger set active
+        level2AccessTrigger.SetActive(true);
 
-        //load next level
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        gameObject.SetActive(false);
+        nextObjective.SetActive(true);
+
+        
+
+        
     }
 
     public override void DrawHUD()
