@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class PlaceInteraction : MonoBehaviour, IInteractable
 {
     public GameObject playerObj,template;
-    
+    public bool doesThisConsume;
     public UnityEvent PlaceEvent;
     private Character player;
 
@@ -23,8 +23,19 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
         //if what player is holding matches the place interaction
         if (gameObject.name.Contains(player.GetObjectHeld()))
         {
-            
-            
+
+            if (doesThisConsume)
+            {
+
+                //remove object held
+                player.DropObjectHeld(true);
+
+                DataHub.ObjectInteracted.objectPlacedOn = gameObject.name;
+
+                //invoke place event
+                PlaceEvent.Invoke();
+                return;
+            }
             //place object held to template by setting position
             GameObject obj = player.itemsArrayObj.GetComponent<ItemsArray>().itemGameObjects.Find(x => x.name == player.GetObjectHeld());
             Collider objCol = obj.GetComponent<Collider>();
@@ -46,7 +57,6 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
             DataHub.ObjectInteracted.interaction = "place";*/
 
             DataHub.ObjectInteracted.objectPlacedOn = gameObject.name;
-            //check if the interaction is tied with an objective requirement
             
             //invoke place event
             PlaceEvent.Invoke();

@@ -11,7 +11,7 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     {
         Collider objCol = GetComponent<Collider>();
         objCol.attachedRigidbody.useGravity = true;
-        player.HoldObject(gameObject.name);
+        player.HoldObject(gameObject.name,gameObject);
 
         /*DataHub.ObjectInteracted.interactedObj = gameObject;
         DataHub.ObjectInteracted.interactable = player.GetObjectHeld();

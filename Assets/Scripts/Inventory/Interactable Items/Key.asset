@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbbe5f1dc708c554e94aaea4e9b0c25a, type: 3}
   m_Name: Key
   m_EditorClassIdentifier: 
+  id: 2
   displayName: Key
   icon: {fileID: 0}
+  isDuplicable: 0

@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using System;
 using UnityEngine.Events;
 
+
 public class Character : MonoBehaviour
 {
 
@@ -22,24 +23,27 @@ public class Character : MonoBehaviour
     private Vector3 move;
     private Vector3 moveDir;
 
-    private GameObject teleportTrigger; 
+    private GameObject teleportTrigger;
+
+    public List<GameObject> objectsHeld = new List<GameObject>();
 
 
     private float gravity = -9.81f;
 
     private float verticalVelocity;
     private float currentVelocity;
-    private bool hasJumped, hasLanded, isFalling, isRunning, isInVehicle, isCrouching, isMoving, isSitting, isBoosted, isAbleToTeleport;
+    private bool hasJumped, hasLanded, isFalling, isRunning, isCrouching, isMoving, isSitting, isBoosted, isAbleToTeleport, isAllowedMovement = true;
     private bool isPlayerOnPlaceable = false;
     private float speedTemp;
 
     //public Vector3 objectPosition;
     public string objectHeld = "EmptyObj";
-    public bool isOnTeleportZone = false, isTeleporting;
+    public bool isOnTeleportZone, isTeleporting,isNearbyVehicle,isInVehicle,isExitingVehicle;
     public static event Action onJump;
 
     public Transform cam;
     public GameObject cameraObj;
+    public GameObject ThirdPersonCamera;
     public GameObject itemsArrayObj;
     [SerializeField] private float smoothTime = 0.05f;
     [SerializeField] private float speed = 5f, walkingSpeed = 5f, runSpeed = 3f;
@@ -80,7 +84,19 @@ public class Character : MonoBehaviour
             isTeleporting = false;
             
         }
-        
+        if (isExitingVehicle)
+        {
+            GameObject car = GameObject.Find("Car");
+            Debug.Log(car.transform.position);
+            transform.position = new Vector3(car.transform.position.x + 5, car.transform.position.y, car.transform.position.z);
+            transform.rotation = car.transform.rotation;
+            if(transform.position.x >= car.transform.position.x)
+            {
+                isExitingVehicle = false;
+            }
+            
+            
+        }
         
     }
     // Update is called once per frame
@@ -108,7 +124,7 @@ public class Character : MonoBehaviour
         {
             GoToLocation();
         }*/
-        if (Input.GetKeyDown(KeyCode.C))
+        /*if (Input.GetKeyDown(KeyCode.C))
         {
 
 
@@ -133,34 +149,70 @@ public class Character : MonoBehaviour
             }
 
 
+        }*/
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (isNearbyVehicle && !isInVehicle)
+            {
+                Debug.Log("Entering Vehicle...");
+
+                //enable car controls
+                GameObject.Find("Car").GetComponent<PrometeoCarController>().enabled = true;
+
+                //disable movement
+                isAllowedMovement = false;
+
+                //disable main cam
+                ThirdPersonCamera.SetActive(false);
+
+
+                isInVehicle = true;
+
+                //set player invisible
+                gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+                //set collider off
+                gameObject.GetComponent<CapsuleCollider>().enabled = false;
+                return;
+            }
+            if (isInVehicle)
+            {
+                Debug.Log("Exit Vehicle");
+
+                //disable car controls
+                GameObject.Find("Car").GetComponent<PrometeoCarController>().enabled = false;
+
+                //allow movement
+                isAllowedMovement = true;
+
+                //enable main cam
+                ThirdPersonCamera.SetActive(true);
+
+                isInVehicle = false;
+
+                //set player visible
+                gameObject.GetComponent<MeshRenderer>().enabled = true;
+
+                //set collider on
+                gameObject.GetComponent<CapsuleCollider>().enabled = true;
+
+                //set player pos beside vehicle
+                isExitingVehicle = true;
+                
+            }
+
         }
-        /* if (Input.GetKeyDown(KeyCode.F))
-         {
-             if (!isSitting)
-             {
-                 Debug.Log("Entering Vehicle...");
-                 //animator.SetBool("isEnteringVehicle", true);
-                 isSitting = true;
-             }
-             else
-             {
-                 Debug.Log("Exiting Vehicle");
-                 //animator.SetBool("isEnteringVehicle", false);
-                 isSitting = false;
-             }
-
-         }
-         if(isCrouching && isMoving)
-         {
-             Debug.Log("Crouch Walking...");
-             animator.SetBool("isCrouchWalking", true);
-         }
-         else if(isCrouching && !isMoving)
-         {
-             Debug.Log("Not Crouch Walking");
-             animator.SetBool("isCrouchWalking", false);
-         }*/
-
+       /* if (isCrouching && isMoving)
+        {
+            Debug.Log("Crouch Walking...");
+            animator.SetBool("isCrouchWalking", true);
+        }
+        else if (isCrouching && !isMoving)
+        {
+            Debug.Log("Not Crouch Walking");
+            animator.SetBool("isCrouchWalking", false);
+        }
+*/
 
         //check if player is falling
         if (!characterController.isGrounded && !hasJumped)
@@ -267,7 +319,10 @@ public class Character : MonoBehaviour
     //this method is called in playerinput object events
     public void Move(InputAction.CallbackContext context)
     {
-
+        if (!isAllowedMovement)
+        {
+            return;
+        }
 
 
         if (context.canceled && !context.performed)
@@ -362,6 +417,11 @@ public class Character : MonoBehaviour
     
     private void OnTriggerStay(Collider other)
     {
+        //for vehicle entry
+        if (other.gameObject.name.Contains("Vehicle"))
+        {
+            
+        }
         //for enter/exit triggers
         if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
         {
@@ -373,6 +433,10 @@ public class Character : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.name.Contains("Player Detection Range"))
+        {
+            isNearbyVehicle = true;
+        }
         if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
         {
             //set label on
@@ -419,6 +483,10 @@ public class Character : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (other.gameObject.name.Contains("Player Detection Range"))
+        {
+            isNearbyVehicle = false;
+        }
         if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
         {
             //set label off
@@ -455,9 +523,18 @@ public class Character : MonoBehaviour
         
 
     }
+
+    /*private Vector3 SetPlayerPosition(float x, float y, float z)
+    {
+        return;
+    }*/
     public bool GetIsPlayerOnPlaceable()
     {
         return isPlayerOnPlaceable;
+    }
+    public void AddToListOfObjectsHeld(GameObject obj)
+    {
+        objectsHeld.Add(obj);
     }
     
     /*
@@ -473,19 +550,20 @@ public class Character : MonoBehaviour
         For example, we have a PlankPlaceable interaction in the first level and we need a Plank for it. The naming must be consistent. If we have ShortPlankPlaceable, we need ShortPlank for it.
 
  */
-    public void HoldObject(string objName)
+    public void HoldObject(string objName,GameObject obj)
     {
         if (objName == "EmptyObj")
         {
             return;
         }
-        
 
         //add to inventory
-        if(inv.Add(itemsArray.interactables.Find(item => item.displayName.Equals(objName))))
+        if (inv.Add(itemsArray.interactables.Find(item => item.ToString().StartsWith(objName))))
         {
-            //make object disappear/inactive
+            /*//make object disappear/inactive
             GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objName);
+            obj.SetActive(false);*/
+            AddToListOfObjectsHeld(obj);
             obj.SetActive(false);
         }
         objectHeld = GetObjectHeld();
@@ -505,23 +583,29 @@ public class Character : MonoBehaviour
             Debug.Log("No items to drop!");
             return;
         }
-        //remove from inventory       
-        inv.Remove(itemsArray.interactables.Find(item => item.displayName.Equals(objectHeld.Trim())));
+        
 
 
         if (!isPlaced)
         {
+            
+            GameObject obj = objectsHeld.Find(x => x.name == GetObjectHeld());
+
             //make object reappear beside player
-            GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objectHeld.Trim());
+            //GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objectHeld.Trim());
             obj.SetActive(true);
 
             obj.transform.position = gameObject.transform.position;
             
             obj.transform.rotation = gameObject.transform.rotation;
 
+            objectsHeld.Remove(obj);
+
             
         }
+        //remove from inventory
         
+        inv.Remove(itemsArray.interactables.Find(item => item.displayName.Equals(objectHeld.Trim())));
         objectHeld = GetObjectHeld();
 
     }
