@@ -9,6 +9,8 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
     public bool doesThisConsume;
     public UnityEvent PlaceEvent;
     private Character player;
+    public int maxPlaceableCount; //0 if it this does not consume
+    private int placeCount;
 
     public void Interact()
     {
@@ -26,18 +28,28 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
 
             if (doesThisConsume)
             {
-
+                
+                ++placeCount;
+                Debug.Log("Placed " + placeCount + "/" + maxPlaceableCount);
                 //remove object held
                 player.DropObjectHeld(true);
 
                 DataHub.ObjectInteracted.objectPlacedOn = gameObject.name;
 
-                //invoke place event
-                PlaceEvent.Invoke();
+
+
+                if (placeCount == maxPlaceableCount)
+                {
+                    //invoke place event
+                    PlaceEvent.Invoke();
+                }
+
+                
                 return;
             }
             //place object held to template by setting position
-            GameObject obj = player.itemsArrayObj.GetComponent<ItemsArray>().itemGameObjects.Find(x => x.name == player.GetObjectHeld());
+            //GameObject obj = player.itemsArrayObj.GetComponent<ItemsArray>().itemGameObjects.Find(x => x.name == player.GetObjectHeld());
+            GameObject obj = player.GetGameObjectHeld();
             Collider objCol = obj.GetComponent<Collider>();
             if (!obj.activeSelf)
             {
@@ -45,7 +57,7 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
             }
             obj.transform.position = template.transform.position;
             obj.transform.rotation = template.transform.rotation;
-            objCol.attachedRigidbody.useGravity = false;
+            objCol.attachedRigidbody.useGravity = true;
 
             //remove object held
             player.DropObjectHeld(true);

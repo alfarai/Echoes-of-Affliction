@@ -33,7 +33,7 @@ public class GoToLobby : IObjective
     public override void CallNextObjective()
     {
 
-        Debug.Log("Goal 2 Completed");
+        
         gameObject.SetActive(false);
         nextObjective.SetActive(true);
     }

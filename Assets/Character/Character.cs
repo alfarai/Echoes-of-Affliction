@@ -87,7 +87,6 @@ public class Character : MonoBehaviour
         if (isExitingVehicle)
         {
             GameObject car = GameObject.Find("Car");
-            Debug.Log(car.transform.position);
             transform.position = new Vector3(car.transform.position.x + 5, car.transform.position.y, car.transform.position.z);
             transform.rotation = car.transform.rotation;
             if(transform.position.x >= car.transform.position.x)
@@ -423,7 +422,7 @@ public class Character : MonoBehaviour
             
         }
         //for enter/exit triggers
-        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
+        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter") || other.gameObject.name.Contains("Climb"))
         {
             if(teleportTrigger != other.gameObject.transform.GetChild(0).gameObject)
             {
@@ -437,20 +436,16 @@ public class Character : MonoBehaviour
         {
             isNearbyVehicle = true;
         }
-        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
+        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter") || other.gameObject.name.Contains("Climb"))
         {
             //set label on
             other.gameObject.transform.GetChild(1).gameObject.SetActive(true);
             isOnTeleportZone = true;
         }
         
-        if (other.tag == "SpawnCP")
-        {
-            //Debug.Log("Player entered Spawn");
+        
 
-        }
-       
-        if (other.tag == "PlankCP")
+        if (other.gameObject.name.Contains("Placeable"))
         {
             isPlayerOnPlaceable = true;
 
@@ -470,15 +465,24 @@ public class Character : MonoBehaviour
         {
             DataHub.ObjectiveHelper.hasReachedLobby = true;
         }
+        if(other.gameObject.name == "LevelWall")
+        {
 
-        
+            DataHub.ObjectiveHelper.hasFoundLevel2Exit = true;
+        }
+        if (other.gameObject.name == "CarPark")
+        {
+            DataHub.ObjectiveHelper.hasFoundACar = true;
+        }
+
+
         /*if (other.isTrigger)
         {
             
             DataHub.TriggerInteracted.lastTriggerEntered = other.gameObject.name;
             EnterTrigger.Invoke();
         }*/
-        
+
     }
 
     private void OnTriggerExit(Collider other)
@@ -487,7 +491,7 @@ public class Character : MonoBehaviour
         {
             isNearbyVehicle = false;
         }
-        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter"))
+        if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter") || other.gameObject.name.Contains("Climb"))
         {
             //set label off
             other.gameObject.transform.GetChild(1).gameObject.SetActive(false);
@@ -558,7 +562,7 @@ public class Character : MonoBehaviour
         }
 
         //add to inventory
-        if (inv.Add(itemsArray.interactables.Find(item => item.ToString().StartsWith(objName))))
+        if (inv.Add(itemsArray.interactables.Find(item => item.displayName.StartsWith(objName))))
         {
             /*//make object disappear/inactive
             GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objName);
@@ -595,8 +599,9 @@ public class Character : MonoBehaviour
             //GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objectHeld.Trim());
             obj.SetActive(true);
 
-            obj.transform.position = gameObject.transform.position;
-            
+            obj.transform.position = new Vector3(gameObject.transform.position.x + 0.8f, gameObject.transform.position.y, gameObject.transform.position.z + 0.8f);
+
+
             obj.transform.rotation = gameObject.transform.rotation;
 
             objectsHeld.Remove(obj);
@@ -620,6 +625,10 @@ public class Character : MonoBehaviour
     {
         objectHeld = inv.GetActiveItem();
         Debug.Log("Focused on " + objectHeld);
+    }
+    public GameObject GetGameObjectHeld()
+    {
+        return objectsHeld.Find(x => x.name == GetObjectHeld());
     }
 
 }

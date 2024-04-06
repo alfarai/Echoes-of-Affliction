@@ -128,9 +128,9 @@ public class Inventory : MonoBehaviour
 
 
 
-            Debug.Log("Dropping item");
+            //Debug.Log("Dropping item");
             DataHub.PlayerStatus.isInventoryFull = false;
-            Debug.Log(item.itemData.displayName);
+            
 
             //find specific item to remove from inventory that player wishes to remove
             //if we directly do inventory.remove, it will return false on the 2nd drop if it had duplicates because we're removing a copy, not the same object: https://stackoverflow.com/questions/10971167/list-remove-in-c-sharp-does-not-remove-item
@@ -147,7 +147,7 @@ public class Inventory : MonoBehaviour
 
             if (!itemData.isDuplicable)
             {
-                Debug.Log("Deleting dict not dupe");
+                //Debug.Log("Deleting dict not dupe");
                 //if item is not duplicable, remove from dictionary
                 itemDictionary.Remove(itemData);
             }
@@ -156,7 +156,7 @@ public class Inventory : MonoBehaviour
 
                 if (!duplicateTracker.Remove(item.GetItemDataName()))
                 {
-                    Debug.Log("Deleting dict");
+                    //Debug.Log("Deleting dict");
                     itemDictionary.Remove(itemData);
 
                 }
