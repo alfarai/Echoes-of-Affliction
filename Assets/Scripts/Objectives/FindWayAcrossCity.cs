@@ -5,7 +5,7 @@ using UnityEngine;
 public class FindWayAcrossCity : IObjective
 {
     public GameObject nextObjective;
-    private string label = "GOAL 6: Find your way across the city.";
+    private string label = "GOAL 7: Find your way across the city.";
     private bool isComplete;
     public override void AutoFinish()
     {

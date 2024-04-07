@@ -18,7 +18,7 @@ public class ConditionSetter : MonoBehaviour
     }
     public void HandleHold()
     {
-        Debug.Log("Holding");
+        
         switch (DataHub.ObjectInteracted.objectHeld)
         {
 
@@ -50,9 +50,7 @@ public class ConditionSetter : MonoBehaviour
                 DataHub.ObjectiveHelper.hasKeyBeenPlaced = true;
                 break;
             case "CarNeedsJerry":
-                Debug.Log("done");
-                DataHub.ObjectiveHelper.hasFilledGas = true;
-
+                DataHub.ObjectiveHelper.hasFilledCarWithGas = true;
                 break;
 
         }

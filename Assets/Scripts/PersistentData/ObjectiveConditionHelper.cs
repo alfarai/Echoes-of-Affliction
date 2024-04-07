@@ -6,8 +6,7 @@ public class ObjectiveConditionHelper
 {
     public int activeObjectiveID;
 
-    //SubObjectives
-    public bool hasFilledGas;
+    
 
     //Objective 1
     public bool hasExitedSpawn;
@@ -23,6 +22,9 @@ public class ObjectiveConditionHelper
 
     //Objective 5
     public bool hasFilledCarWithGas;
+
+    //Objective 6
+    public bool hasReachedToweringTwins;
 
     //Objective 7
     public bool hasFoundLevel2Exit;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class FindACar : IObjective
 {
     public GameObject nextObjective;
-    private string label = "GOAL 4: Find a car";
+    private string label = "GOAL 4: Find a car.";
     private bool isComplete;
     public override void AutoFinish()
     {

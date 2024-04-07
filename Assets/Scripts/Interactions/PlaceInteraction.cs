@@ -14,6 +14,7 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        
         //if player is holding on empty object (not holding anything)
         if (GameObject.Find(player.GetObjectHeld()) == GameObject.Find("EmptyObj"))
         {
@@ -25,11 +26,12 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
         //if what player is holding matches the place interaction
         if (gameObject.name.Contains(player.GetObjectHeld()))
         {
-
+            Debug.Log(placeCount);
             if (doesThisConsume)
             {
                 
                 ++placeCount;
+                
                 Debug.Log("Placed " + placeCount + "/" + maxPlaceableCount);
                 //remove object held
                 player.DropObjectHeld(true);
@@ -73,6 +75,7 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
             //invoke place event
             PlaceEvent.Invoke();
             return;
+            
         }
         //add else here for if it doesnt match
         else

@@ -474,6 +474,10 @@ public class Character : MonoBehaviour
         {
             DataHub.ObjectiveHelper.hasFoundACar = true;
         }
+        if (other.gameObject.name == "Towering Twins")
+        {
+            DataHub.ObjectiveHelper.hasReachedToweringTwins = true;
+        }
 
 
         /*if (other.isTrigger)

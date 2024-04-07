@@ -355,7 +355,8 @@ public class PrometeoCarController : MonoBehaviour
             }
 
         }
-        else if (DataHub.ObjectiveHelper.hasFilledGas)
+        //DataHub.ObjectiveHelper.hasFilledCarWithGas
+        else if (DataHub.ObjectiveHelper.hasFilledCarWithGas)
         {
 
             if (Input.GetKey(KeyCode.W))
