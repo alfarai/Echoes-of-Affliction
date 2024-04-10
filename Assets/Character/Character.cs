@@ -45,6 +45,7 @@ public class Character : MonoBehaviour
     public GameObject cameraObj;
     public GameObject ThirdPersonCamera;
     public GameObject itemsArrayObj;
+    public float pushPower = 2.0f;
     [SerializeField] private float smoothTime = 0.05f;
     [SerializeField] private float speed = 5f, walkingSpeed = 5f, runSpeed = 3f;
     [SerializeField] private float gravityMultiplier = 3.0f;
@@ -414,6 +415,36 @@ public class Character : MonoBehaviour
 
     }
     
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody body = hit.collider.attachedRigidbody;
+
+        // no rigidbody or heavier than player or is interactable
+        if (body == null || body.isKinematic || body.mass > gameObject.GetComponentInParent<Rigidbody>().mass || hit.gameObject.TryGetComponent(out IInteractable obj))
+        {
+            return;
+        }
+
+        // We dont want to push objects below us
+        if (hit.moveDirection.y < -0.3)
+        {
+            return;
+        }
+        Vector3 forceDir = hit.gameObject.transform.position - transform.position;
+        forceDir.y = 0;
+        forceDir.Normalize();
+        body.AddForceAtPosition(forceDir * (gameObject.GetComponentInParent<Rigidbody>().mass - body.mass) * speed, transform.position, ForceMode.Impulse);
+
+        // Calculate push direction from move direction,
+        // we only push objects to the sides never up and down
+        //Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+
+        // If you know how fast your character is trying to move,
+        // then you can also multiply the push velocity by that.
+
+        // Apply the push
+        // body.velocity = pushDir * pushPower;
+    }
     private void OnTriggerStay(Collider other)
     {
         //for vehicle entry
@@ -428,6 +459,11 @@ public class Character : MonoBehaviour
             {
                 teleportTrigger = other.gameObject.transform.GetChild(0).gameObject;
             }
+        }
+        if (other.gameObject.TryGetComponent(out IInteractable interactable) && other.gameObject.name.Contains("Placeable") && Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.Log("interacted!");
+            interactable.Interact();
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -459,6 +495,7 @@ public class Character : MonoBehaviour
             Debug.Log("Player is hurt!");
             return;
         }
+        
 
         //OBJECTIVE CONDITIONS
         if (other.gameObject.name == "Lobby")
@@ -467,7 +504,6 @@ public class Character : MonoBehaviour
         }
         if(other.gameObject.name == "LevelWall")
         {
-
             DataHub.ObjectiveHelper.hasFoundLevel2Exit = true;
         }
         if (other.gameObject.name == "CarPark")
@@ -477,6 +513,15 @@ public class Character : MonoBehaviour
         if (other.gameObject.name == "Towering Twins")
         {
             DataHub.ObjectiveHelper.hasReachedToweringTwins = true;
+        }
+        if (other.gameObject.name == "Evacuation Center")
+        {
+            DataHub.ObjectiveHelper.hasReachedEvacCenter = true;
+        }
+        if (other.gameObject.name == "Telephone Booth")
+        {
+            DataHub.ObjectiveHelper.hasFoundTelephone = true;
+            //trigger random event: earthquake then block exit
         }
 
 
@@ -512,7 +557,7 @@ public class Character : MonoBehaviour
             Debug.Log("Player exited Lobby");
 
         }
-        if (other.tag == "PlankCP")
+        if (other.gameObject.name.Contains("Placeable"))
         {
             isPlayerOnPlaceable = false;
 

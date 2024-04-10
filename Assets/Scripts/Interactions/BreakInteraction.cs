@@ -5,7 +5,6 @@ using UnityEngine.Events;
 
 public class BreakInteraction : MonoBehaviour, IInteractable
 {
-    public GameObject playerObj;
     public int hitsBeforeBreaking = 0;
     public UnityEvent BreakEvent;
     private Character player;
@@ -72,7 +71,7 @@ public class BreakInteraction : MonoBehaviour, IInteractable
     // Start is called before the first frame update
     void Start()
     {
-        player = playerObj.GetComponent<Character>();
+        player = GameObject.Find("Player").GetComponent<Character>();
     }
 
     // Update is called once per frame

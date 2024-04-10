@@ -24,6 +24,16 @@ public class ObjectiveConditionHelper
     public bool hasFilledCarWithGas;
 
     //Objective 6
+    public bool hasReachedEvacCenter;
+
+
+    //Objective 7
+    public bool hasTalkedWithMarshall, hasTalkedWithYoungBoy;
+
+    //Objective x
+    public bool hasFoundTelephone;
+
+    //Objective x
     public bool hasReachedToweringTwins;
 
     //Objective 7

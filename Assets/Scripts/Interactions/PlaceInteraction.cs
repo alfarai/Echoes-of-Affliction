@@ -5,13 +5,14 @@ using UnityEngine.Events;
 
 public class PlaceInteraction : MonoBehaviour, IInteractable
 {
-    public GameObject playerObj,template;
+    public GameObject template;
     public bool doesThisConsume;
     public UnityEvent PlaceEvent;
     private Character player;
     public int maxPlaceableCount; //0 if it this does not consume
     private int placeCount;
-
+    
+    
     public void Interact()
     {
         
@@ -26,7 +27,7 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
         //if what player is holding matches the place interaction
         if (gameObject.name.Contains(player.GetObjectHeld()))
         {
-            Debug.Log(placeCount);
+            
             if (doesThisConsume)
             {
                 
@@ -52,14 +53,14 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
             //place object held to template by setting position
             //GameObject obj = player.itemsArrayObj.GetComponent<ItemsArray>().itemGameObjects.Find(x => x.name == player.GetObjectHeld());
             GameObject obj = player.GetGameObjectHeld();
-            Collider objCol = obj.GetComponent<Collider>();
+            //Collider objCol = obj.GetComponent<Collider>();
             if (!obj.activeSelf)
             {
                 obj.SetActive(true);
             }
             obj.transform.position = template.transform.position;
             obj.transform.rotation = template.transform.rotation;
-            objCol.attachedRigidbody.useGravity = true;
+            //objCol.attachedRigidbody.useGravity = true;
 
             //remove object held
             player.DropObjectHeld(true);
@@ -88,7 +89,7 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
     // Start is called before the first frame update
     void Start()
     {
-        player = playerObj.GetComponent<Character>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
     }
 
     // Update is called once per frame
