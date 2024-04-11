@@ -112,9 +112,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosion: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4,
     type: 3}
-  timeBeforeExplosion: 3
-  radius: 10
-  power: 200
+  timeBeforeExplosion: 5
+  radius: 15
+  power: 700
 --- !u!114 &4197147677207182508
 MonoBehaviour:
   m_ObjectHideFlags: 0

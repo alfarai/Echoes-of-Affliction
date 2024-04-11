@@ -32,7 +32,7 @@ public class ExplosionForce : MonoBehaviour
             
             return;
         }
-        List<Collider> colliders = Physics.OverlapSphere(transform.position, radius).ToList();
+        List<Collider> colliders = Physics.OverlapSphere(transform.position, 3).ToList();
         
         if (colliders.Find(collider => collider.gameObject.name == "Flames"))
         {
@@ -53,7 +53,12 @@ public class ExplosionForce : MonoBehaviour
 
         foreach (Collider hit in colliders)
         {
-
+            //explode other explosives caught in explosion
+            if(hit.gameObject.TryGetComponent(out ExplosionForce explosive))
+            {
+                explosive.SetIsThereHeatNearby(true);
+                continue;
+            }
             Rigidbody rb = hit.GetComponent<Rigidbody>();
 
             if (rb != null)
@@ -87,5 +92,11 @@ public class ExplosionForce : MonoBehaviour
         // Display the explosion radius when selected
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, radius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 3);
+    }
+    public void SetIsThereHeatNearby(bool x)
+    {
+        isThereHeatNearby = x;
     }
 }

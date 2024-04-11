@@ -30,8 +30,11 @@ public class ObjectiveConditionHelper
     //Objective 7
     public bool hasTalkedWithMarshall, hasTalkedWithYoungBoy;
 
-    //Objective x
+    //Objective 8
     public bool hasFoundTelephone;
+
+    //Objective 9
+    public bool hasReachedHigherGround;
 
     //Objective x
     public bool hasReachedToweringTwins;

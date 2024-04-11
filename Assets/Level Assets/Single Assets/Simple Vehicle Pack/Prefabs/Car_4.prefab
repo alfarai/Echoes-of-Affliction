@@ -419,7 +419,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4870167790249810}
   - component: {fileID: 8045478566846187819}
-  - component: {fileID: 3194641110291325679}
+  - component: {fileID: 65069568248608196}
+  - component: {fileID: 6330732110452615168}
   m_Layer: 0
   m_Name: Car_4
   m_TagString: Untagged
@@ -492,7 +493,7 @@ MonoBehaviour:
   carSpeed: 0
   isDrifting: 0
   isTractionLocked: 0
---- !u!54 &3194641110291325679
+--- !u!54 &65069568248608196
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -500,7 +501,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1646981259178978}
   serializedVersion: 2
-  m_Mass: 700
+  m_Mass: 400
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -508,6 +509,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &6330732110452615168
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646981259178978}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.38135383, y: 0.36387026, z: 0.53264314}
+  m_Center: {x: 0, y: 0.3180648, z: -0.23367827}
 --- !u!1 &452186601335841541
 GameObject:
   m_ObjectHideFlags: 0

@@ -521,6 +521,11 @@ public class Character : MonoBehaviour
         if (other.gameObject.name == "Telephone Booth")
         {
             DataHub.ObjectiveHelper.hasFoundTelephone = true;
+            
+        }
+        if (other.gameObject.name == "Higher Ground")
+        {
+            DataHub.ObjectiveHelper.hasReachedHigherGround = true;
             //trigger random event: earthquake then block exit
         }
 

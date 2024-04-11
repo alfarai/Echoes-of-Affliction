@@ -9,7 +9,7 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     private Character player;
     public void Interact()
     {
-        Debug.Log("hold");
+        
         
         player.HoldObject(gameObject.name,gameObject);
 
