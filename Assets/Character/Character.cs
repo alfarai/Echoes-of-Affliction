@@ -490,9 +490,9 @@ public class Character : MonoBehaviour
         if (other.tag == "Hazard")
         {
             DataHub.PlayerStatus.damageTaken = 10;
+            TakeDamage(DataHub.PlayerStatus.damageTaken);
             //call healthchange event
-            TakeDamageEvent.Invoke();
-            Debug.Log("Player is hurt!");
+            
             return;
         }
         
@@ -576,7 +576,11 @@ public class Character : MonoBehaviour
         
 
     }
-
+    public void TakeDamage(int damage)
+    {
+        TakeDamageEvent.Invoke();
+        Debug.Log("Player is hurt!");
+    }
     /*private Vector3 SetPlayerPosition(float x, float y, float z)
     {
         return;
