@@ -36,8 +36,14 @@ public class ObjectiveConditionHelper
     //Objective 9
     public bool hasReachedHigherGround;
 
-    //Objective x
+    //Objective 10
     public bool hasReachedToweringTwins;
+
+    //Objective 11
+    public bool hasGivenDanBandages;
+    
+    //Objective 12
+    public bool hasReachedChopper;
 
     //Objective 7
     public bool hasFoundLevel2Exit;

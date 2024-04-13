@@ -528,6 +528,10 @@ public class Character : MonoBehaviour
             DataHub.ObjectiveHelper.hasReachedHigherGround = true;
             //trigger random event: earthquake then block exit
         }
+        if (other.gameObject.name == "Chopper")
+        {
+            DataHub.ObjectiveHelper.hasReachedChopper = true;
+        }
 
 
         /*if (other.isTrigger)

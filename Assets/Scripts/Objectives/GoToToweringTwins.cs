@@ -5,7 +5,7 @@ using UnityEngine;
 public class GoToToweringTwins : IObjective
 {
     public GameObject nextObjective;
-    private string label = "GOAL 6: Go to the Towering Twins building.";
+    private string label = "GOAL 10: Go to the Towering Twins building.";
     private bool isComplete;
     public override void AutoFinish()
     {
@@ -33,7 +33,7 @@ public class GoToToweringTwins : IObjective
 
     public override int GetObjectiveID()
     {
-        return 6;
+        return 10;
     }
 
     // Start is called before the first frame update

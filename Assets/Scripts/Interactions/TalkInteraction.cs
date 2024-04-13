@@ -21,6 +21,16 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         {
             DataHub.ObjectiveHelper.hasTalkedWithYoungBoy = true;
         }
+        if (gameObject.name == "Dan")
+        {
+            
+            if (player.GetObjectHeld().Trim().Equals("Bandages"))
+            {
+                
+                DataHub.ObjectiveHelper.hasGivenDanBandages = true;
+            }
+            
+        }
 
     }
 
