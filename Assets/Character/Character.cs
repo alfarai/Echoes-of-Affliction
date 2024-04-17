@@ -104,7 +104,11 @@ public class Character : MonoBehaviour
     {
 
         ApplyGravity();
-        ApplyRotationAndMovement();
+        if (isAllowedMovement)
+        {
+            ApplyRotationAndMovement();
+        }
+        
         if (staminaManager.staminaBar.value == 0)
         {
             speed = walkingSpeed;
@@ -356,7 +360,8 @@ public class Character : MonoBehaviour
     public void Jump(InputAction.CallbackContext context)
     {
         //https://forum.unity.com/threads/learning-new-inputsystem-when-and-how-is-the-cancelled-callback-used.969501/
-
+        if (!isAllowedMovement)
+            return;
         if (context.performed && !hasJumped)
         {
             //  Debug.Log("Jump pressed");
@@ -692,5 +697,8 @@ public class Character : MonoBehaviour
     {
         return objectsHeld.Find(x => x.name == GetObjectHeld());
     }
-
+    public void SetIsAllowedMovement(bool flag)
+    {
+        isAllowedMovement = flag;
+    }
 }

@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 5171625488746043866}
   - component: {fileID: 6927022978257431824}
   - component: {fileID: 8898683456454171604}
+  - component: {fileID: 7146526216604901426}
   m_Layer: 0
-  m_Name: SM_Chainsaw
+  m_Name: Chainsaw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,3 +95,29 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7029531919713087591, guid: b5f61d261ce1bad449dd30fb4ee37591, type: 3}
+--- !u!114 &7146526216604901426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8872450542428687557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 549c9a9a765481b4580f793d64716051, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HoldEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 2d9340f47f2057a4d98c0d54d9f6802d, type: 2}
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
