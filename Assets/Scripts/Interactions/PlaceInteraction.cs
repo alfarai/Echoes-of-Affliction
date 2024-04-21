@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
-
 public class PlaceInteraction : MonoBehaviour, IInteractable
 {
     public GameObject template;
@@ -11,8 +11,9 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
     private Character player;
     public int maxPlaceableCount; //0 if it this does not consume
     private int placeCount;
-    
-    
+    public GameObject tooltipPrefab;
+    private GameObject clone;
+
     public void Interact()
     {
         
@@ -90,11 +91,20 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
+        
     }
 
-    // Update is called once per frame
-    void Update()
+    
+    public void InstantiateLabel()
     {
+        clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
+        clone.GetComponentInChildren<TextMesh>().text = "You need to place something here...";
+        clone.GetComponentInChildren<TextMesh>().fontSize = 230;
+        clone.GetComponentInChildren<Image>().enabled = false;
 
+    }
+    public void DestroyLabel()
+    {
+        Destroy(clone);
     }
 }

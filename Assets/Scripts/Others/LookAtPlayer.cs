@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class LookAtPlayer : MonoBehaviour
 {
-    public GameObject camera;
+    private Camera camera;
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = transform.parent.position;
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     // Update is called once per frame

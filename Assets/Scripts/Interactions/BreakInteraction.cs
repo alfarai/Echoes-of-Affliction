@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+
+
 public class BreakInteraction : MonoBehaviour, IInteractable
 {
     public int hitsBeforeBreaking = 0;
     public UnityEvent BreakEvent;
     private Character player;
+    public GameObject tooltipPrefab;
+    private GameObject clone;
 
     public void Interact()
     {
@@ -72,11 +76,19 @@ public class BreakInteraction : MonoBehaviour, IInteractable
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<Character>();
+        
     }
 
-    // Update is called once per frame
-    void Update()
-    {
 
+    public void InstantiateLabel()
+    {
+        name = gameObject.name;
+        clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
+        clone.GetComponentInChildren<TextMesh>().text = name.Substring(name.IndexOf(" ")+1);
+
+    }
+    public void DestroyLabel()
+    {
+        Destroy(clone);
     }
 }

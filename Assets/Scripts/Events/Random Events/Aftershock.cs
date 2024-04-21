@@ -12,6 +12,7 @@ public class Aftershock : IEvent
     protected override void PerformAction()
     {
         Debug.Log("Aftershock triggered!");
+        DataHub.WorldEvents.hasFirstAftershockHappened = true;
         //camshake https://www.youtube.com/watch?v=ACf1I27I6Tk&ab_channel=CodeMonkey
         CinemachineFreeLook cam = GameObject.Find("Third Person Camera").GetComponent<CinemachineFreeLook>();
         

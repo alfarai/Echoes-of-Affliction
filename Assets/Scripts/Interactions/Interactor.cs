@@ -12,6 +12,7 @@ public class Interactor : MonoBehaviour
     private Character player;
     private RaycastHit hitInfo;
 
+    
 
 
     // Start is called before the first frame update
@@ -21,6 +22,7 @@ public class Interactor : MonoBehaviour
         player = GetComponent<Character>();
 
     }
+   
 
     // Update is called once per frame
     void LateUpdate()
@@ -44,46 +46,8 @@ public class Interactor : MonoBehaviour
 
             }
         }
-        //placeables are handled in Character.cs onTriggerStay()
-
-        /*
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-
-
-
-                    //if player is holding an object and is on top of a placeable interaction, cast ray down to ensure interaction.
-                    //in place interaction
-
-                    Ray r = new Ray(transform.position, -Vector3.up * InteractRange);
-
-                    //prioritize holdables over placeables
-                    //dont forget to put ignore raycast on checkpoint colliders so it doesnt interact with interactables overlapping checkpoints
-                    //if raycast hit an interactable object
-                    if (Physics.Raycast(new Ray(transform.position, cam.transform.forward * InteractRange), out hitInfo))
-                    {
-
-
-
-                    }
-                    if (player.GetIsPlayerOnPlaceable())
-                    {
-                        //if no interactables on cursor position, cast ray down for placeables
-                        if (Physics.Raycast(r, out hitInfo))
-                        {
-                            if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj2))
-                            {
-                                interactObj2.Interact();
-                                return;
-                            }
-                        }
-                    }
-
-                }*/
-
-
-
     }
-
+    
+    
 }
 

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class FloodScript : MonoBehaviour
 {
-    public float targetScaleY = 10; // Target Y scale
+    public float targetY = 10; // Target Y pos
     public float duration = 180f; // Duration for the scaling animation
-    public FloodLevel floodLevel = FloodLevel.Level0;
+    //public FloodLevel floodLevel = FloodLevel.Level0;
     public enum FloodLevel
     {
         Level0 = 0,
@@ -23,7 +23,7 @@ public class FloodScript : MonoBehaviour
     public void setFloodLevel(Vector3 scale)
     {
    
-        if(scale.y >= 3 && scale.y <5)
+        /*if(scale.y >= 3 && scale.y <5)
         {
             floodLevel = FloodLevel.Level1;
         }
@@ -34,27 +34,27 @@ public class FloodScript : MonoBehaviour
         else if (scale.y >= 8)
         {
             floodLevel = FloodLevel.Level3;
-        }
+        }*/
   
     }
     IEnumerator ScaleObject()
     {
-        Vector3 initialScale = transform.localScale;
-        Vector3 targetScale = new Vector3(initialScale.x, targetScaleY, initialScale.z);
+        Vector3 initialPos = transform.position;
+        Vector3 targetPos = new Vector3(initialPos.x, targetY, initialPos.z);
        
     
             float currentTime = 0f;
 
         while (currentTime < duration)
         {
-            float scaleFactor = Mathf.Lerp(initialScale.y, targetScale.y, currentTime / duration);
-            transform.localScale = new Vector3(initialScale.x, scaleFactor, initialScale.z);
-            setFloodLevel(transform.localScale);
+            float scaleFactor = Mathf.Lerp(initialPos.y, targetPos.y, currentTime / duration);
+            transform.position = new Vector3(initialPos.x, scaleFactor, initialPos.z);
+            //setFloodLevel(transform.localScale);
             currentTime += Time.deltaTime;
             yield return null;
         }
 
         // Ensure final scale is set correctly to avoid precision errors
-        transform.localScale = targetScale;
+        transform.position = targetPos;
     }
 }

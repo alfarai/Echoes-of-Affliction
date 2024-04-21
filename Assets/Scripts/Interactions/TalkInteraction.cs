@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Cinemachine;
+using TMPro;
 public class TalkInteraction : MonoBehaviour, IInteractable
 {
     //public GameObject playerObj;
@@ -12,9 +13,14 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     [SerializeField]
     private DialogueText dialogue;
     [SerializeField]
+    private DialogueText dialogue2;
+    [SerializeField]
     private CinemachineVirtualCamera speakerCam;
     private bool isConversing,flag;
-    
+
+    public GameObject tooltipPrefab;
+    private GameObject clone;
+
     public void Interact() 
     {
         StartConversation();
@@ -32,12 +38,8 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         }
         if (gameObject.name == "Dan")
         {
+            DataHub.WorldEvents.hasFoundDan = true;
             
-            if (player.GetObjectHeld().Trim().Equals("Bandages"))
-            {
-                
-                DataHub.ObjectiveHelper.hasGivenDanBandages = true;
-            }
             
         }
 
@@ -54,7 +56,12 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         {
             speakerCam.enabled = true;
         }
-
+        if (player.GetObjectHeld().Trim().Equals("Bandages"))
+        {
+            DataHub.ObjectiveHelper.hasGivenDanBandages = true;
+            Talk(dialogue2);
+            return;
+        }
         Talk(dialogue);
     }
     private void EndConversation()
@@ -80,17 +87,37 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     {
         if (isConversing)
         {
+            DestroyLabel();
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                Talk(dialogue);
+                if (player.GetObjectHeld().Trim().Equals("Bandages"))
+                {
+                    Talk(dialogue2);
+                }
+                else
+                {
+                    Talk(dialogue);
+                }
+                
                 //if dialogue controller finished showing text
                 if (dialogueController.GetHasEndedConversation())
                 {
                     EndConversation();
+                    InstantiateLabel();
                 }
             }
         }
         
+    }
 
+    public void InstantiateLabel()
+    {
+        clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
+        clone.GetComponentInChildren<TextMesh>().text = gameObject.name;
+
+    }
+    public void DestroyLabel()
+    {
+        Destroy(clone);
     }
 }

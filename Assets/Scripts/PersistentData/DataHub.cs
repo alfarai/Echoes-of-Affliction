@@ -13,4 +13,5 @@ public static class DataHub
     public static PlayerStatus PlayerStatus = new PlayerStatus();
     public static ObjectiveConditionHelper ObjectiveHelper = new ObjectiveConditionHelper();
     public static TriggerInteracted TriggerInteracted = new TriggerInteracted();
+    public static WorldEvents WorldEvents = new WorldEvents();
 }
