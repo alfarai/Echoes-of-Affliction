@@ -12,7 +12,7 @@ public class StaminaManager : MonoBehaviour
     public Slider staminaBar;
 
     public GameObject barCanvas;
-    bool canvasActive = false;
+    bool canvasActive = true;
     public Image progressStamina;
     public Image usedStamina;
     public Camera _cam;
@@ -64,8 +64,8 @@ public class StaminaManager : MonoBehaviour
 
     IEnumerator hideStaminaWheel()
     {
-        yield return new WaitForSeconds(0.01f);
-        canvasActive = false;
+        yield return new WaitForSeconds(0.05f);
+        //canvasActive = false;
         barCanvas.SetActive(canvasActive);
     }
 
