@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class StaminaManager : MonoBehaviour
 {
@@ -10,11 +11,19 @@ public class StaminaManager : MonoBehaviour
 
     public Slider staminaBar;
 
+    public GameObject barCanvas;
+    bool canvasActive = false;
+    public Image progressStamina;
+    public Image usedStamina;
+    public Camera _cam;
+
     public bool isRegenStamina = true;
     private void Start()
     {
+        _cam = Camera.main;
         currentStamina = maxStamina;
         UpdateStaminaBar();
+        barCanvas.SetActive(canvasActive);
         staminaBar.interactable = false; // Disable interactability
     }
 
@@ -34,7 +43,30 @@ public class StaminaManager : MonoBehaviour
         if (!isRegenStamina && CanPerformAction(runStaminaCost))
         {
             UseStamina(runStaminaCost);
+            usedStamina.fillAmount = (currentStamina / maxStamina) + 0.07f;
         }
+    }
+
+    void Update()
+    {
+        transform.rotation = Quaternion.LookRotation(transform.position - _cam.transform.position);
+
+        if (currentStamina >= maxStamina)
+        {
+            StartCoroutine(hideStaminaWheel());
+        }
+    }
+
+    private void LateUpdate()
+    {
+        transform.LookAt(transform.position + _cam.transform.rotation * Vector3.forward, _cam.transform.rotation * Vector3.up);
+    }
+
+    IEnumerator hideStaminaWheel()
+    {
+        yield return new WaitForSeconds(0.01f);
+        canvasActive = false;
+        barCanvas.SetActive(canvasActive);
     }
 
     public void RegenStamina(bool boolean)
