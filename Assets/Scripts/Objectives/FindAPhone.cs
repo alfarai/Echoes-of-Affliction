@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class FindAPhone : IObjective
 {
     public GameObject nextObjective;
-    private string label = "GOAL 8: Find a telephone booth.";
+    private string label = "GOAL 8: Find a a telephone booth to call Dan";
     private bool isComplete;
     public override void AutoFinish()
     {
@@ -14,7 +15,7 @@ public class FindAPhone : IObjective
 
     public override void CallNextObjective()
     {
-
+        //call aftershock 2
         gameObject.SetActive(false);
         nextObjective.SetActive(true);
     }
@@ -26,10 +27,7 @@ public class FindAPhone : IObjective
         Invoke("CallNextObjective", 5f);
     }
 
-    public override void DrawHUD()
-    {
-        GUILayout.Label(label);
-    }
+    
 
     public override int GetObjectiveID()
     {
@@ -45,7 +43,7 @@ public class FindAPhone : IObjective
     // Update is called once per frame
     void Update()
     {
-        if (DataHub.ObjectiveHelper.hasFoundTelephone && !isComplete)
+        if (DataHub.ObjectiveHelper.hasFoundTelephone && !isComplete && DataHub.ObjectiveHelper.hasFinishedCallingDan)
         {
             CompleteObjective();
         }
@@ -54,8 +52,12 @@ public class FindAPhone : IObjective
             AutoFinish();
         }
     }
-    void OnGUI()
+    void Awake()
     {
-        DrawHUD();
+        SetGoalText(label);
+    }
+    public override void SetGoalText(string label)
+    {
+        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
     }
 }

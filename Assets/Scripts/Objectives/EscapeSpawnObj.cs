@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class EscapeSpawnObj : IObjective
 {
@@ -20,6 +21,7 @@ public class EscapeSpawnObj : IObjective
     void Awake()
     {
         DataHub.ObjectiveHelper.activeObjectiveID = GetObjectiveID();
+        SetGoalText(label);
 
     }
     void Update()
@@ -59,9 +61,9 @@ public class EscapeSpawnObj : IObjective
         CallNextObjective();
     }
 
-    public override void DrawHUD()
+    public override void SetGoalText(string label)
     {
-        GUILayout.Label(label);
+        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
     }
     public override void CallNextObjective()
     {
@@ -74,9 +76,6 @@ public class EscapeSpawnObj : IObjective
         nextObjective.SetActive(true);
     }
 
-    void OnGUI()
-    {
-        DrawHUD();
-    }
+    
 
 }

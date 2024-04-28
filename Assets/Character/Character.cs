@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 public class Character : MonoBehaviour
 {
-
+    private AudioManager audio;
     private StaminaManager staminaManager;
     private CharacterController characterController;
     private Inventory inv;
@@ -41,8 +41,7 @@ public class Character : MonoBehaviour
     public bool isOnTeleportZone, isTeleporting,isNearbyVehicle,isInVehicle,isExitingVehicle;
     public static event Action onJump;
 
-    public Transform cam;
-    public GameObject cameraObj;
+    private Transform cameraTransform;
     public GameObject ThirdPersonCamera;
     public GameObject itemsArrayObj;
     public float pushPower = 2.0f;
@@ -52,6 +51,10 @@ public class Character : MonoBehaviour
     [SerializeField] private float jumpPower = 3f;
 
     public UnityEvent ExitTrigger, EnterTrigger, TakeDamageEvent;
+    private GameObject car;
+    private float elapsed;
+    public List<AudioClip> feet;
+    private AudioSource playerAudioSource;
 
     private void Awake()
     {
@@ -66,14 +69,15 @@ public class Character : MonoBehaviour
         speedTemp = speed;
         //animator = GetComponentInChildren<Animator>();
         characterController = GetComponent<CharacterController>();
-        camera = cameraObj.GetComponent<Camera>();
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        cameraTransform = camera.transform;
         inv = GetComponent<Inventory>();
         itemsArray = itemsArrayObj.GetComponent<ItemsArray>();
         staminaManager = GetComponent<StaminaManager>();
         //objectPosition = transform.position;
-
-        
-
+        car = GameObject.Find("Car");
+        audio = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        playerAudioSource = gameObject.GetComponent<AudioSource>();
     }
    
     private void FixedUpdate()
@@ -102,7 +106,7 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-
+        elapsed += Time.deltaTime;
         ApplyGravity();
         if (isAllowedMovement)
         {
@@ -160,6 +164,7 @@ public class Character : MonoBehaviour
             {
                 Debug.Log("Entering Vehicle...");
 
+                
                 //enable car controls
                 GameObject.Find("Car").GetComponent<PrometeoCarController>().enabled = true;
 
@@ -177,6 +182,8 @@ public class Character : MonoBehaviour
 
                 //set collider off
                 gameObject.GetComponent<CapsuleCollider>().enabled = false;
+
+                //transform.position = car.transform.position;
                 return;
             }
             if (isInVehicle)
@@ -239,7 +246,22 @@ public class Character : MonoBehaviour
             // Debug.Log("Landed");
             hasLanded = false;
         }
-
+        if (isMoving && !isRunning)
+        {
+            if (elapsed > 0.35f)
+            {
+                PlayFootsteps();
+                elapsed = 0;
+            }
+        }
+        if (isMoving && isRunning)
+        {
+            if (elapsed > 0.25f)
+            {
+                PlayFootsteps();
+                elapsed = 0;
+            }
+        }
         //check if player jumped
         if (hasJumped)
         {
@@ -267,6 +289,11 @@ public class Character : MonoBehaviour
 
 
     }
+    private void PlayFootsteps()
+    {
+        playerAudioSource.PlayOneShot(feet[UnityEngine.Random.Range(0, feet.Count)]);
+
+    }
 
     private void OnEnable()
     {
@@ -291,11 +318,11 @@ public class Character : MonoBehaviour
 
 
         //face direction of movement
-        var targetAngle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg + cam.eulerAngles.y; //find angle require to move to get to point (x,y). cam.eulerangles.y takes into account cam rotation
+        var targetAngle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y; //find angle require to move to get to point (x,y). cam.eulerangles.y takes into account cam rotation
         var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref currentVelocity, smoothTime); //smooth angle so it wont snap
         transform.rotation = Quaternion.Euler(0f, angle, 0f); //apply rotation
 
-        moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward; // turn rotation into diretion by multiplying vector3.forward. by having cam.eulerangles.y, we move into the direction of cam rotation
+        moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward; // turn rotation into direction by multiplying vector3.forward. by having cam.eulerangles.y, we move into the direction of cam rotation
         moveDir.y = verticalVelocity;
         //movement
         characterController.Move(moveDir * Time.deltaTime * speed);
@@ -354,6 +381,7 @@ public class Character : MonoBehaviour
         input = context.ReadValue<Vector2>();
         //  Debug.Log(input);
         move = new Vector3(input.x, 0, input.y);
+        
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
     }
@@ -396,13 +424,9 @@ public class Character : MonoBehaviour
         {
             Debug.Log("Player is Running...");
             isRunning = true;
-            isMoving = true;
             //animator.SetBool("isRunning", isRunning);
 
             speed += runSpeed; //isRunning is true if shift is held
-
-
-
             staminaManager.RegenStamina(false);
 
         }
@@ -410,7 +434,6 @@ public class Character : MonoBehaviour
         {
             Debug.Log("Player isn't Running...");
             isRunning = false;
-            isMoving = false;
             //animator.SetBool("isRunning", isRunning);
             speed -= runSpeed;
             staminaManager.RegenStamina(true);
@@ -470,6 +493,10 @@ public class Character : MonoBehaviour
             Debug.Log("interacted!");
             interactable.Interact();
         }
+        if (other.gameObject.name == "Map Guard")
+        {
+            BringPlayerBackToMap();
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -500,6 +527,7 @@ public class Character : MonoBehaviour
             
             return;
         }
+        
         
 
         //OBJECTIVE CONDITIONS
@@ -700,5 +728,9 @@ public class Character : MonoBehaviour
     public void SetIsAllowedMovement(bool flag)
     {
         isAllowedMovement = flag;
+    }
+    private void BringPlayerBackToMap()
+    {
+        transform.position = new Vector3(transform.position.x, 4, transform.position.z);
     }
 }

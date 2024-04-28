@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class GetOutOfTheBuilding : IObjective
@@ -15,11 +16,7 @@ public class GetOutOfTheBuilding : IObjective
 
     private string label = "GOAL 3: Get out of the building";
 
-    void Awake()
-    {
-        DataHub.ObjectiveHelper.activeObjectiveID = GetObjectiveID();
-        //DataHub.ObjectiveHelper.conditionCount = conditionCount;
-    }
+ 
     void Update()
     {
         //Debug.Log(DataHub.ObjectInteracted.interactedObj.name);
@@ -50,10 +47,7 @@ public class GetOutOfTheBuilding : IObjective
         
     }
 
-    public override void DrawHUD()
-    {
-        GUILayout.Label(label);
-    }
+    
 
     public override int GetObjectiveID()
     {
@@ -89,8 +83,12 @@ public class GetOutOfTheBuilding : IObjective
     }
 
 
-    void OnGUI()
+    void Awake()
     {
-        DrawHUD();
+        SetGoalText(label);
+    }
+    public override void SetGoalText(string label)
+    {
+        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class GoToToweringTwins : IObjective
 {
     public GameObject nextObjective;
-    private string label = "GOAL 10: Go to the Towering Twins building.";
+    private string label = "GOAL 10: Go to the Towering Twins building and find Dan";
     private bool isComplete;
     public override void AutoFinish()
     {
@@ -26,10 +26,7 @@ public class GoToToweringTwins : IObjective
         Invoke("CallNextObjective", 5f);
     }
 
-    public override void DrawHUD()
-    {
-        GUILayout.Label(label);
-    }
+    
 
     public override int GetObjectiveID()
     {
@@ -45,7 +42,7 @@ public class GoToToweringTwins : IObjective
     // Update is called once per frame
     void Update()
     {
-        if (DataHub.ObjectiveHelper.hasReachedToweringTwins && !isComplete)
+        if (DataHub.ObjectiveHelper.hasReachedToweringTwins && DataHub.ObjectiveHelper.hasTalkedWithDan && !isComplete)
         {
             CompleteObjective();
         }
@@ -54,8 +51,12 @@ public class GoToToweringTwins : IObjective
             AutoFinish();
         }
     }
-    void OnGUI()
+    void Awake()
     {
-        DrawHUD();
+        SetGoalText(label);
+    }
+    public override void SetGoalText(string label)
+    {
+        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
     }
 }

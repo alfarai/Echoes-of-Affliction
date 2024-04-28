@@ -21,7 +21,8 @@ namespace LowPolyWater
                 waveHeight = 0.3f;
                 waveFrequency = 0.15f;
                 waveLength = 40f;
-                duration = 60f;
+                //duration = 60f;
+                duration = 30f;
             }
             if (level == 2) //set when find bandages for dan objective is active
             {
@@ -29,7 +30,8 @@ namespace LowPolyWater
                 waveHeight = 0.8f;
                 waveFrequency = 0.17f;
                 waveLength = 40f;
-                duration = 600f;
+                //duration = 600f;
+                duration = 60f;
             }
             if (level == 3) //set after completing find bandages for dan objective 
             {
@@ -37,7 +39,8 @@ namespace LowPolyWater
                 waveHeight = 1.5f;
                 waveFrequency = 0.2f;
                 waveLength = 40f;
-                duration = 1200f;
+                //duration = 1200f;
+                duration = 60f;
             }
         }
         //Position where the waves originate from

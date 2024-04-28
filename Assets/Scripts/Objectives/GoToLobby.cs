@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class GoToLobby : IObjective
 {
 
@@ -12,11 +12,8 @@ public class GoToLobby : IObjective
     private string label = "GOAL 2: Go to the lobby.";
     private bool isComplete;
 
-    void Awake()
-    {
-        DataHub.ObjectiveHelper.activeObjectiveID = GetObjectiveID();
-
-    }
+   
+  
     void Update()
     {
         if (DataHub.ObjectiveHelper.hasReachedLobby && !isComplete)
@@ -38,10 +35,7 @@ public class GoToLobby : IObjective
         nextObjective.SetActive(true);
     }
 
-    public override void DrawHUD()
-    {
-        GUILayout.Label(label);
-    }
+  
 
     public override int GetObjectiveID()
     {
@@ -68,9 +62,12 @@ public class GoToLobby : IObjective
 
     }
 
-    void OnGUI()
+    void Awake()
     {
-        DrawHUD();
+        SetGoalText(label);
     }
-
+    public override void SetGoalText(string label)
+    {
+        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+    }
 }

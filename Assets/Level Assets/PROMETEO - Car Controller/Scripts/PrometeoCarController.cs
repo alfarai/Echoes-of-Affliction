@@ -158,6 +158,8 @@ public class PrometeoCarController : MonoBehaviour
     WheelFrictionCurve RRwheelFriction;
     float RRWextremumSlip;
 
+    private AudioManager audioManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -198,6 +200,7 @@ public class PrometeoCarController : MonoBehaviour
         RRwheelFriction.asymptoteSlip = rearRightCollider.sidewaysFriction.asymptoteSlip;
         RRwheelFriction.asymptoteValue = rearRightCollider.sidewaysFriction.asymptoteValue;
         RRwheelFriction.stiffness = rearRightCollider.sidewaysFriction.stiffness;
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
         // We save the initial pitch of the car engine sound.
         if (carEngineSound != null)
@@ -355,8 +358,8 @@ public class PrometeoCarController : MonoBehaviour
             }
 
         }
-        //DataHub.ObjectiveHelper.hasFilledCarWithGas
-        else if (DataHub.ObjectiveHelper.hasFilledCarWithGas)
+        //if (DataHub.ObjectiveHelper.hasFilledCarWithGas)
+        else if(true)
         {
 
             if (Input.GetKey(KeyCode.W))
@@ -365,6 +368,8 @@ public class PrometeoCarController : MonoBehaviour
                 CancelInvoke("DecelerateCar");
                 deceleratingCar = false;
                 GoForward();
+                
+                //audioManager.PlayOnLoop(audioManager.car[1]);
             }
             if (Input.GetKey(KeyCode.S))
             {
@@ -469,13 +474,16 @@ public class PrometeoCarController : MonoBehaviour
                 {
                     if (!tireScreechSound.isPlaying)
                     {
-                        tireScreechSound.Play();
+                        //tireScreechSound.Play();
                     }
                 }
                 else if ((!isDrifting) && (!isTractionLocked || Mathf.Abs(carSpeed) < 12f))
                 {
-                    tireScreechSound.Stop();
+                    
+                    //tireScreechSound.Stop();
                 }
+                if (!carEngineSound.isPlaying)
+                    carEngineSound.Play();
             }
             catch (Exception ex)
             {

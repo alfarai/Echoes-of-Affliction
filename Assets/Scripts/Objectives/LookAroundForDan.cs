@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class LookAroundForDan : IObjective
 {
     public GameObject nextObjective;
@@ -26,10 +26,6 @@ public class LookAroundForDan : IObjective
         Invoke("CallNextObjective", 5f);
     }
 
-    public override void DrawHUD()
-    {
-        GUILayout.Label(label);
-    }
 
     public override int GetObjectiveID()
     {
@@ -54,8 +50,12 @@ public class LookAroundForDan : IObjective
             AutoFinish();
         }
     }
-    void OnGUI()
+    void Awake()
     {
-        DrawHUD();
+        SetGoalText(label);
+    }
+    public override void SetGoalText(string label)
+    {
+        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
     }
 }

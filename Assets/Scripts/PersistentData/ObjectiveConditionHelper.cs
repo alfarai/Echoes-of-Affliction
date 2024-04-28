@@ -31,15 +31,17 @@ public class ObjectiveConditionHelper
     public bool hasTalkedWithMarshall, hasTalkedWithYoungBoy;
 
     //Objective 8
-    public bool hasFoundTelephone;
+    public bool hasFoundTelephone, hasFinishedCallingDan;
 
     //Objective 9
     public bool hasReachedHigherGround;
 
     //Objective 10
     public bool hasReachedToweringTwins;
+    public bool hasTalkedWithDan;
 
     //Objective 11
+
     public bool hasGivenDanBandages;
     
     //Objective 12

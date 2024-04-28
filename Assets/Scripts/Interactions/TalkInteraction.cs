@@ -11,9 +11,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     private DialogueController dialogueController;
     private Character player;
     [SerializeField]
-    private DialogueText dialogue;
-    [SerializeField]
-    private DialogueText dialogue2;
+    private DialogueText[] dialogue = new DialogueText[2];
     [SerializeField]
     private CinemachineVirtualCamera speakerCam;
     private bool isConversing,flag;
@@ -38,10 +36,12 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         }
         if (gameObject.name == "Dan")
         {
+            DataHub.ObjectiveHelper.hasTalkedWithDan = true;
             DataHub.WorldEvents.hasFoundDan = true;
             
             
         }
+        
 
     }
     private void StartConversation()
@@ -59,13 +59,17 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         if (player.GetObjectHeld().Trim().Equals("Bandages"))
         {
             DataHub.ObjectiveHelper.hasGivenDanBandages = true;
-            Talk(dialogue2);
+            Talk(dialogue[1]);
             return;
         }
-        Talk(dialogue);
+        Talk(dialogue[0]);
     }
     private void EndConversation()
     {
+        if (gameObject.name == "Phone")
+        {
+            DataHub.ObjectiveHelper.hasFinishedCallingDan = true;
+        }
         speakerCam.enabled = false;
         isConversing = false;
         //disable player movement
@@ -92,11 +96,11 @@ public class TalkInteraction : MonoBehaviour, IInteractable
             {
                 if (player.GetObjectHeld().Trim().Equals("Bandages"))
                 {
-                    Talk(dialogue2);
+                    Talk(dialogue[1]);
                 }
                 else
                 {
-                    Talk(dialogue);
+                    Talk(dialogue[0]);
                 }
                 
                 //if dialogue controller finished showing text

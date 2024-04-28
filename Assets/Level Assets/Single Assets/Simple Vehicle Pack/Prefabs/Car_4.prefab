@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 4942120795113776}
   - component: {fileID: 33803517687558392}
   - component: {fileID: 23398125768832394}
-  - component: {fileID: 2518486579502434216}
+  - component: {fileID: 7242594588915436113}
   m_Layer: 0
   m_Name: Frame
   m_TagString: Untagged
@@ -317,7 +317,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &2518486579502434216
+--- !u!65 &7242594588915436113
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -328,8 +328,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.0067079, y: 0.637588, z: 2.4670405}
-  m_Center: {x: 0, y: 0.32780495, z: -2.043126e-16}
+  m_Size: {x: 0.9439152, y: 0.5047785, z: 2.3798854}
+  m_Center: {x: 0, y: 0.39695856, z: -0.027004154}
 --- !u!1 &1616890662523094
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,6 +421,7 @@ GameObject:
   - component: {fileID: 8045478566846187819}
   - component: {fileID: 65069568248608196}
   - component: {fileID: 6330732110452615168}
+  - component: {fileID: 4972415371984994738}
   m_Layer: 0
   m_Name: Car_4
   m_TagString: Untagged
@@ -522,6 +523,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.38135383, y: 0.36387026, z: 0.53264314}
   m_Center: {x: 0, y: 0.3180648, z: -0.23367827}
+--- !u!114 &4972415371984994738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646981259178978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe687b164235cc4da22c75107694832, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &452186601335841541
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,8 +7,8 @@ public class Aftershock : IEvent
 {
 
     public GameObject rocksToSpawn;
-    public GameObject buildingsToDestroy;
-    public GameObject fallenBuilding,fallenBuilding2;
+    //public GameObject buildingsToDestroy;
+    public GameObject[] buildingsToDestroy;
     protected override void PerformAction()
     {
         Debug.Log("Aftershock triggered!");
@@ -18,11 +18,18 @@ public class Aftershock : IEvent
         
         //block exit (spawn rocks)
         rocksToSpawn.SetActive(true);
-        buildingsToDestroy.SetActive(false);
+        //buildingsToDestroy.SetActive(false);
 
         //tilt buildings
-        fallenBuilding.transform.rotation = Quaternion.Euler(-70, 90, 0);
-        fallenBuilding2.transform.rotation = Quaternion.Euler(-90, 0, 0);
+        foreach(GameObject bldg in buildingsToDestroy)
+        {
+            if (bldg.TryGetComponent<CollapseBuilding>(out CollapseBuilding collapse))
+            {
+                collapse.enabled = true;
+            }
+        }
+        //fallenBuilding.transform.rotation = Quaternion.Euler(-70, 90, 0);
+        //fallenBuilding2.transform.rotation = Quaternion.Euler(-90, 0, 0);
     }
 
     protected override bool ShouldTrigger(Collider other)
