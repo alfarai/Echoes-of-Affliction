@@ -12,8 +12,7 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     private GameObject clone;
     public void Interact()
     {
-        
-        
+        gameObject.GetComponent<Rigidbody>().useGravity = true;
         player.HoldObject(gameObject.name,gameObject);
         DestroyLabel();
 

@@ -46,7 +46,7 @@ public class ConditionSetter : MonoBehaviour
             case "PlaceableNeedsPlank":
                 Debug.Log("A plank was placed!");
                 break;
-            case "LobbyDoorNeedsKey":
+            case "LobbyDoorNeedsKeys":
                 DataHub.ObjectiveHelper.hasKeyBeenPlaced = true;
                 break;
             case "CarNeedsJerry":

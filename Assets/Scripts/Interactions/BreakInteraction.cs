@@ -82,6 +82,9 @@ public class BreakInteraction : MonoBehaviour, IInteractable
 
     public void InstantiateLabel()
     {
+        //Play ding effect on placeable area
+
+        //show helper
         name = gameObject.name;
         clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
         clone.GetComponentInChildren<TextMesh>().text = name.Substring(name.IndexOf(" ")+1);

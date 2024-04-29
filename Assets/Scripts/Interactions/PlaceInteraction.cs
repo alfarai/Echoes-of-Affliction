@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using TMPro;
 public class PlaceInteraction : MonoBehaviour, IInteractable
 {
     public GameObject template;
@@ -11,8 +12,9 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
     private Character player;
     public int maxPlaceableCount; //0 if it this does not consume
     private int placeCount;
-    public GameObject tooltipPrefab;
-    private GameObject clone;
+    public GameObject text;
+    //public GameObject tooltipPrefab;
+    //private GameObject clone;
 
     public void Interact()
     {
@@ -54,14 +56,17 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
             //place object held to template by setting position
             //GameObject obj = player.itemsArrayObj.GetComponent<ItemsArray>().itemGameObjects.Find(x => x.name == player.GetObjectHeld());
             GameObject obj = player.GetGameObjectHeld();
-            //Collider objCol = obj.GetComponent<Collider>();
+            Collider objCol = obj.GetComponent<Collider>();
             if (!obj.activeSelf)
             {
                 obj.SetActive(true);
             }
             obj.transform.position = template.transform.position;
             obj.transform.rotation = template.transform.rotation;
-            //objCol.attachedRigidbody.useGravity = true;
+            //template.GetComponent<FixedJoint>().connectedBody = obj.GetComponent<Rigidbody>();
+            objCol.attachedRigidbody.useGravity = false;
+            //obj.GetComponent<HoldInteraction>().enabled = false;
+            //objCol.attachedRigidbody.useGravity = false;
 
             //remove object held
             player.DropObjectHeld(true);
@@ -97,14 +102,18 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
     
     public void InstantiateLabel()
     {
-        clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
+        /*clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
         clone.GetComponentInChildren<TextMesh>().text = "You need to place something here...";
         clone.GetComponentInChildren<TextMesh>().fontSize = 230;
-        clone.GetComponentInChildren<Image>().enabled = false;
+        clone.GetComponentInChildren<Image>().enabled = false;*/
+        text.SetActive(true);
+        text.GetComponentInChildren<TextMeshProUGUI>().text = "You can place something here...";
 
     }
     public void DestroyLabel()
     {
-        Destroy(clone);
+        //Destroy(clone);
+        text.SetActive(false);
+        text.GetComponentInChildren<TextMeshProUGUI>().text = "";
     }
 }

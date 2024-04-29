@@ -10,7 +10,7 @@ public class GetOutOfTheBuilding : IObjective
 
     public GameObject nextObjective;
     public GameObject level2AccessTrigger;
-
+    public GameObject door;
 
     private bool isComplete;
 
@@ -90,5 +90,9 @@ public class GetOutOfTheBuilding : IObjective
     public override void SetGoalText(string label)
     {
         GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+    }
+    public void OpenDoor()
+    {
+        door.transform.rotation = Quaternion.Euler(0, -90f, 0);
     }
 }
