@@ -15,7 +15,7 @@ public class Character : MonoBehaviour
     private ItemsArray itemsArray;
     private Vector3 place;
     private bool hasClickedTPLocation;
-    private Camera camera;
+    
     private RaycastHit hit;
     private Animator animator;
 
@@ -32,7 +32,7 @@ public class Character : MonoBehaviour
 
     private float verticalVelocity;
     private float currentVelocity;
-    private bool hasJumped, hasLanded, isFalling, isRunning, isCrouching, isMoving, isSitting, isBoosted, isAbleToTeleport, isAllowedMovement = true;
+    private bool hasJumped, hasLanded, isFalling, isRunning, isMoving, isAllowedMovement = true;
     private bool isPlayerOnPlaceable = false;
     private float speedTemp;
 
@@ -41,12 +41,13 @@ public class Character : MonoBehaviour
     public bool isOnTeleportZone, isTeleporting,isNearbyVehicle,isInVehicle,isExitingVehicle;
     public static event Action onJump;
 
-    private Transform cameraTransform;
+    public Transform camera;
     public GameObject ThirdPersonCamera;
+    public GameObject FocusCamera;
     public GameObject itemsArrayObj;
     public float pushPower = 2.0f;
     [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 5f, walkingSpeed = 5f, runSpeed = 3f;
+    [SerializeField] private float playerVelocity= 5f, walkingSpeed = 5f, sprintingSpeed = 9f;
     [SerializeField] private float gravityMultiplier = 3.0f;
     [SerializeField] private float jumpPower = 3f;
 
@@ -55,6 +56,7 @@ public class Character : MonoBehaviour
     private float elapsed;
     public List<AudioClip> feet;
     private AudioSource playerAudioSource;
+    private GameObject RobModel;
 
     private void Awake()
     {
@@ -64,13 +66,12 @@ public class Character : MonoBehaviour
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         //hpScript = hpObj.GetComponent<UpdateHP>();
         //hp = hpScript.GetHP(); //set hp
-        speedTemp = speed;
+        speedTemp = playerVelocity;
         //animator = GetComponentInChildren<Animator>();
         characterController = GetComponent<CharacterController>();
-        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
-        cameraTransform = camera.transform;
         inv = GetComponent<Inventory>();
         itemsArray = itemsArrayObj.GetComponent<ItemsArray>();
         staminaManager = GetComponent<StaminaManager>();
@@ -78,6 +79,7 @@ public class Character : MonoBehaviour
         car = GameObject.Find("Car");
         audio = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         playerAudioSource = gameObject.GetComponent<AudioSource>();
+        RobModel = GameObject.Find("Rob_Animated");
     }
    
     private void FixedUpdate()
@@ -110,12 +112,12 @@ public class Character : MonoBehaviour
         ApplyGravity();
         if (isAllowedMovement)
         {
-            ApplyRotationAndMovement();
+           ApplyRotationAndMovement();
         }
         
-        if (staminaManager.staminaBar.value == 0)
+        if (!staminaManager.CanSprint())
         {
-            speed = walkingSpeed;
+            SetPlayerSpeed(walkingSpeed);
         }
         
         if (Input.GetKeyDown(KeyCode.G))
@@ -126,7 +128,18 @@ public class Character : MonoBehaviour
         {
             isTeleporting = true;
         }
-        
+        //zoom in
+        if (Input.GetMouseButtonDown(1))
+        {
+            ThirdPersonCamera.SetActive(false);
+            FocusCamera.SetActive(true);
+        }
+        //zoom out
+        if (Input.GetMouseButtonUp(1))
+        {
+            ThirdPersonCamera.SetActive(true);
+            FocusCamera.SetActive(false);
+        }
 
         /*if (Input.GetKeyDown(KeyCode.Q) && isOnTeleportZone)
         {
@@ -178,7 +191,8 @@ public class Character : MonoBehaviour
                 isInVehicle = true;
 
                 //set player invisible
-                gameObject.GetComponent<MeshRenderer>().enabled = false;
+                //gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
+                RobModel.SetActive(false);
 
                 //set collider off
                 gameObject.GetComponent<CapsuleCollider>().enabled = false;
@@ -202,7 +216,8 @@ public class Character : MonoBehaviour
                 isInVehicle = false;
 
                 //set player visible
-                gameObject.GetComponent<MeshRenderer>().enabled = true;
+                //gameObject.GetComponent<MeshRenderer>().enabled = true;
+                RobModel.SetActive(true);
 
                 //set collider on
                 gameObject.GetComponent<CapsuleCollider>().enabled = true;
@@ -318,14 +333,14 @@ public class Character : MonoBehaviour
 
 
         //face direction of movement
-        var targetAngle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y; //find angle require to move to get to point (x,y). cam.eulerangles.y takes into account cam rotation
+        var targetAngle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg + camera.eulerAngles.y; //find angle require to move to get to point (x,y). cam.eulerangles.y takes into account cam rotation
         var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref currentVelocity, smoothTime); //smooth angle so it wont snap
         transform.rotation = Quaternion.Euler(0f, angle, 0f); //apply rotation
 
         moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward; // turn rotation into direction by multiplying vector3.forward. by having cam.eulerangles.y, we move into the direction of cam rotation
         moveDir.y = verticalVelocity;
         //movement
-        characterController.Move(moveDir * Time.deltaTime * speed);
+        characterController.Move(moveDir * Time.deltaTime * playerVelocity);
 
 
     }
@@ -341,7 +356,7 @@ public class Character : MonoBehaviour
         }
         moveDir = Vector3.zero;
         moveDir.y = verticalVelocity;
-        characterController.Move(moveDir * Time.deltaTime * speed);
+        characterController.Move(moveDir * Time.deltaTime * playerVelocity);
         //reset moveDir so that it only applies gravity
 
     }
@@ -362,11 +377,11 @@ public class Character : MonoBehaviour
 
             //animator.SetBool("isWalking", false);
             isMoving = false;
-            if (isCrouching && !isMoving)
+            if (!isMoving)
             {
                 //    Debug.Log("Not Crouch Walking");
                 //animator.SetBool("isCrouchWalking", false);
-                speed = speedTemp;
+                playerVelocity = speedTemp;
             }
         }
         if (context.started && !context.performed)
@@ -380,7 +395,7 @@ public class Character : MonoBehaviour
 
         input = context.ReadValue<Vector2>();
         //  Debug.Log(input);
-        move = new Vector3(input.x, 0, input.y);
+        move = new Vector3(input.x, 0, input.y).normalized;
         
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
@@ -422,25 +437,27 @@ public class Character : MonoBehaviour
     {
         if (context.started)
         {
-            Debug.Log("Player is Running...");
             isRunning = true;
             //animator.SetBool("isRunning", isRunning);
 
-            speed += runSpeed; //isRunning is true if shift is held
-            staminaManager.RegenStamina(false);
+            SetPlayerSpeed(sprintingSpeed);
+            staminaManager.ShiftHeld(true);
 
         }
         if (context.canceled && !context.performed)
         {
-            Debug.Log("Player isn't Running...");
             isRunning = false;
             //animator.SetBool("isRunning", isRunning);
-            speed -= runSpeed;
-            staminaManager.RegenStamina(true);
+            SetPlayerSpeed(walkingSpeed);
+            staminaManager.ShiftHeld(false);
         }
 
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
+    }
+    private void SetPlayerSpeed(float var)
+    {
+        playerVelocity = var;
     }
     
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -461,7 +478,7 @@ public class Character : MonoBehaviour
         Vector3 forceDir = hit.gameObject.transform.position - transform.position;
         forceDir.y = 0;
         forceDir.Normalize();
-        body.AddForceAtPosition(forceDir * (gameObject.GetComponentInParent<Rigidbody>().mass - body.mass) * speed, transform.position, ForceMode.Impulse);
+        body.AddForceAtPosition(forceDir * (gameObject.GetComponentInParent<Rigidbody>().mass - body.mass) * playerVelocity, transform.position, ForceMode.Impulse);
 
         // Calculate push direction from move direction,
         // we only push objects to the sides never up and down

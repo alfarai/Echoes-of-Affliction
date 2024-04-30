@@ -11,86 +11,115 @@ public class StaminaManager : MonoBehaviour
 
     public Slider staminaBar;
 
-    public GameObject barCanvas;
+    public Canvas barCanvas;
+    public CanvasGroup barCanvasGroup;
     bool canvasActive = true;
     public Image progressStamina;
     public Image usedStamina;
     public Camera _cam;
 
+
     public bool isRegenStamina = true;
+
+    private bool isShiftHeld, isValueChanged;
+    private Color originalRedColor;
+    private float elapsed;
+    private IEnumerator coroutine,coroutine2;
     private void Start()
     {
+        originalRedColor = usedStamina.color;
+        barCanvasGroup.alpha = 0;
         _cam = Camera.main;
         currentStamina = maxStamina;
-        UpdateStaminaBar();
-        barCanvas.SetActive(canvasActive);
-        staminaBar.interactable = false; // Disable interactability
+        //progressStamina.interactable = false; // Disable interactability
     }
 
+    
     private void FixedUpdate()
     {
-   
-        // Regenerate stamina over time
-        if (currentStamina < maxStamina)
+        if (progressStamina.fillAmount == 0)
         {
-            UpdateStaminaBar();
-        }
-        if (isRegenStamina && currentStamina<maxStamina) {
+            usedStamina.color = Color.Lerp(usedStamina.color, Color.red, Mathf.PingPong(Time.time, 0.05f));
             
-            currentStamina += staminaRegenRate;
-        
         }
-        if (!isRegenStamina && CanPerformAction(runStaminaCost))
+        else
         {
-            UseStamina(runStaminaCost);
-            usedStamina.fillAmount = (currentStamina / maxStamina) + 0.07f;
+            usedStamina.color = Color.Lerp(usedStamina.color, originalRedColor, Mathf.PingPong(Time.time, 0.15f));
         }
+
     }
 
     void Update()
     {
-        transform.rotation = Quaternion.LookRotation(transform.position - _cam.transform.position);
 
-        if (currentStamina >= maxStamina)
+        if (currentStamina < maxStamina && !isShiftHeld)
         {
-            StartCoroutine(hideStaminaWheel());
+            RegenStamina();
         }
+
+        if (CanSprint() && isShiftHeld)
+        {
+            UseStamina();
+        }
+
+        //if stamina is full, hide it
+        if (progressStamina.fillAmount == 1)
+        {
+            barCanvasGroup.alpha = Mathf.MoveTowards(barCanvasGroup.alpha, 0, 2.0f * Time.deltaTime);
+        }
+        //if stamina isnt full, show it
+        if(progressStamina.fillAmount < 1)
+        {
+            barCanvasGroup.alpha = Mathf.MoveTowards(barCanvasGroup.alpha, 1, 2.0f * Time.deltaTime);
+        }
+        
+        
+        
+
+
+
     }
 
     private void LateUpdate()
     {
-        transform.LookAt(transform.position + _cam.transform.rotation * Vector3.forward, _cam.transform.rotation * Vector3.up);
+        if (isValueChanged)
+        {
+            UpdateStaminaBar();
+            isValueChanged = false;
+        }
+        barCanvas.transform.rotation = Quaternion.LookRotation(transform.position - _cam.transform.position);
     }
 
-    IEnumerator hideStaminaWheel()
+    public void ShiftHeld(bool flag)
     {
-        yield return new WaitForSeconds(0.05f);
-        //canvasActive = false;
-        barCanvas.SetActive(canvasActive);
+        isShiftHeld = flag;
+    }
+    public bool CanSprint()
+    { 
+        return (currentStamina > 0);
     }
 
-    public void RegenStamina(bool boolean)
+    public void UseStamina()
     {
-        isRegenStamina = boolean;
-        
-    }
-    public bool CanPerformAction(float actionCost)
-    {
-        // Check if player has enough stamina to perform an action
-        return currentStamina >= actionCost;
-    }
+        isValueChanged = true;
+        currentStamina -= runStaminaCost;
+        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
 
-    public void UseStamina(float actionCost)
+    }
+    private void RegenStamina()
     {
-        // Use stamina when performing an action
-        currentStamina -= actionCost;
-     
-        UpdateStaminaBar();
+        isValueChanged = true;
+        currentStamina += staminaRegenRate;
+        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+
     }
 
     private void UpdateStaminaBar()
     {
-        staminaBar.value = currentStamina / maxStamina;
+        progressStamina.fillAmount = currentStamina / 100f;
     }
-
+    public void ShowStaminaBar()
+    {
+        canvasActive = true;
+    }
 }
