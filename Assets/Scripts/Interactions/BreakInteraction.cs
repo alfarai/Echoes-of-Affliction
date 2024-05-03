@@ -9,12 +9,17 @@ public class BreakInteraction : MonoBehaviour, IInteractable
 {
     public int hitsBeforeBreaking = 0;
     public UnityEvent BreakEvent;
+    public float timeIntervalBeforeNextHit = 1f;
+    private float elapsedTimeSinceLastHit = -1f; //-1f = no hits, 0f = object was hit
     private Character player;
     public GameObject tooltipPrefab;
     private GameObject clone;
-
+    private Vector3 labelPos;
+    private bool canHit = true, isOutlineActive;
+    private FlashInfo flash;
     public void Interact()
     {
+        
         //if player is holding on empty object (not holding anything)
         if (GameObject.Find(player.GetObjectHeld()) == GameObject.Find("EmptyObj"))
         {
@@ -26,43 +31,32 @@ public class BreakInteraction : MonoBehaviour, IInteractable
         //match breakable interaction with breakable object
         if (gameObject.name.Contains(player.GetObjectHeld()))
         {
-            --hitsBeforeBreaking;
-            
-
-
-            //break object if 0
-            if (hitsBeforeBreaking == 0)
+            if (!canHit)
             {
-                
+                StartCoroutine(flash.FlashMessage("Break is on cooldown!",2));
+               
+            }
+            if (canHit)
+            {
+                --hitsBeforeBreaking;
+                elapsedTimeSinceLastHit = 0;
 
-                gameObject.SetActive(false);
-                Debug.Log("Object broken!");
-                DataHub.ObjectInteracted.objectBroken = gameObject.name;
-                BreakEvent.Invoke();
-                //breakable with loot
-                if (gameObject.tag == "loot")
+
+
+                //break object if 0
+                if (hitsBeforeBreaking == 0)
                 {
-                    /*DataHub.ObjectInteracted.interactedObj = gameObject;
-                    DataHub.ObjectInteracted.interactable = player.GetObjectHeld();
-                    DataHub.ObjectInteracted.interaction = "breakloot";*/
+                    DestroyLabel();
+                    gameObject.SetActive(false);
+                    Debug.Log("Object broken!");
+                    DataHub.ObjectInteracted.objectBroken = gameObject.name;
                     BreakEvent.Invoke();
                 }
-                //breakable without loot
-                else
+                else if (hitsBeforeBreaking > 0)
                 {
-                    /*DataHub.ObjectInteracted.interactedObj = gameObject;
-                    DataHub.ObjectInteracted.interactable = player.GetObjectHeld();
-                    DataHub.ObjectInteracted.interaction = "break";*/
-                    
+                    Debug.Log("Object hit! " + "(" + hitsBeforeBreaking + " left)");
                 }
             }
-            else if (hitsBeforeBreaking > 0)
-            {
-
-                Debug.Log("Object hit! " + "(" + hitsBeforeBreaking + " left)");
-            }
-
-
         }
         //add else here for if it doesnt match
         else
@@ -75,23 +69,44 @@ public class BreakInteraction : MonoBehaviour, IInteractable
     // Start is called before the first frame update
     void Start()
     {
+        flash = GameObject.Find("FlashMessager").GetComponent<FlashInfo>();
+        labelPos = transform.position;
+        labelPos.y -= 1.1f;
         player = GameObject.Find("Player").GetComponent<Character>();
         
+    }
+    void Update()
+    {
+        if(elapsedTimeSinceLastHit >= 0)
+        {
+            canHit = false;
+            elapsedTimeSinceLastHit += Time.deltaTime;
+        }
+        if(elapsedTimeSinceLastHit >= timeIntervalBeforeNextHit)
+        {
+            canHit = true;
+            elapsedTimeSinceLastHit = -1f;
+
+        }
     }
 
 
     public void InstantiateLabel()
     {
-        //Play ding effect on placeable area
-
-        //show helper
-        name = gameObject.name;
-        clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
-        clone.GetComponentInChildren<TextMesh>().text = name.Substring(name.IndexOf(" ")+1);
+        clone = Instantiate(tooltipPrefab, labelPos, Quaternion.identity);
+        clone.GetComponentInChildren<TextMesh>().text = "Break";
 
     }
     public void DestroyLabel()
     {
         Destroy(clone);
+    }
+    public void EnableOutline(bool flag)
+    {
+        //if already active, dont enable
+        if (isOutlineActive && flag)
+            return;
+        isOutlineActive = flag;
+        gameObject.GetComponent<Outline>().enabled = flag;
     }
 }

@@ -6,10 +6,12 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    public GameObject ui;
     public GameObject[] inventorySlots;
     public GameObject itemText;
     public GameObject playerObj;
     private Inventory inv;
+    private bool isUIShown = true;
 
     public Slider healthBar;
     // Start is called before the first frame update
@@ -22,7 +24,16 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (DataHub.PlayerStatus.isTalking || DataHub.PlayerStatus.isCutscenePlaying && isUIShown)
+        {
+            isUIShown = false;
+            ui.SetActive(false);
+        }
+        else if(DataHub.PlayerStatus.isTalking || !DataHub.PlayerStatus.isCutscenePlaying && !isUIShown)
+        {
+            isUIShown = true;
+            ui.SetActive(true);
+        }
     }
     public void UpdateHealthBar()
     {

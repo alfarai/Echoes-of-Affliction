@@ -6,9 +6,9 @@ using TMPro;
 public class EscapeSpawnObj : IObjective
 {
 
-    public GameObject nextObjective;
+    public GameObject nextObjective, goalLabel;
 
-    
+
     private string label = "GOAL 1: Escape the living room.";
     private bool isComplete;
 
@@ -50,7 +50,7 @@ public class EscapeSpawnObj : IObjective
     {
 
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
 
 
@@ -63,7 +63,7 @@ public class EscapeSpawnObj : IObjective
 
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
     public override void CallNextObjective()
     {

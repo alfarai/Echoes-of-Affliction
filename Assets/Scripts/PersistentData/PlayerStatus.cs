@@ -15,4 +15,6 @@ public class PlayerStatus
     public int damageTaken;
 
     public bool isAlive;
+    public bool isTalking;
+    public bool isCutscenePlaying;
 }

@@ -5,7 +5,7 @@ using TMPro;
 
 public class FindAPhone : IObjective
 {
-    public GameObject nextObjective;
+    public GameObject nextObjective, goalLabel;
     private string label = "GOAL 8: Find a a telephone booth to call Dan";
     private bool isComplete;
     public override void AutoFinish()
@@ -23,7 +23,7 @@ public class FindAPhone : IObjective
     public override void CompleteObjective()
     {
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
     }
 
@@ -45,6 +45,7 @@ public class FindAPhone : IObjective
     {
         if (DataHub.ObjectiveHelper.hasFoundTelephone && !isComplete && DataHub.ObjectiveHelper.hasFinishedCallingDan)
         {
+
             CompleteObjective();
         }
         if (Input.GetKeyDown(KeyCode.Comma))
@@ -58,6 +59,6 @@ public class FindAPhone : IObjective
     }
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
 }

@@ -28,7 +28,7 @@ public class Character : MonoBehaviour
     public List<GameObject> objectsHeld = new List<GameObject>();
 
 
-    private float gravity = -9.81f;
+    private float gravity = -8.8f;
 
     private float verticalVelocity;
     private float currentVelocity;
@@ -93,8 +93,8 @@ public class Character : MonoBehaviour
         }
         if (isExitingVehicle)
         {
-            GameObject car = GameObject.Find("Car");
-            transform.position = new Vector3(car.transform.position.x + 5, car.transform.position.y, car.transform.position.z);
+            GameObject car = GameObject.Find("Car Entrance");
+            transform.position = new Vector3(car.transform.position.x, car.transform.position.y, car.transform.position.z);
             transform.rotation = car.transform.rotation;
             if(transform.position.x >= car.transform.position.x)
             {
@@ -110,14 +110,16 @@ public class Character : MonoBehaviour
     {
         elapsed += Time.deltaTime;
         ApplyGravity();
-        if (isAllowedMovement)
+        if (isAllowedMovement || !isInVehicle)
         {
            ApplyRotationAndMovement();
         }
         
+        
         if (!staminaManager.CanSprint())
         {
             SetPlayerSpeed(walkingSpeed);
+            isRunning = false;
         }
         
         if (Input.GetKeyDown(KeyCode.G))
@@ -176,40 +178,34 @@ public class Character : MonoBehaviour
             if (isNearbyVehicle && !isInVehicle)
             {
                 Debug.Log("Entering Vehicle...");
-
                 
                 //enable car controls
-                GameObject.Find("Car").GetComponent<PrometeoCarController>().enabled = true;
-
+                car.GetComponent<PrometeoCarController>().enabled = true;
+                car.GetComponent<AudioSource>().enabled = true;
+                
                 //disable movement
-                isAllowedMovement = false;
-
+                isAllowedMovement = false; 
+                
                 //disable main cam
                 ThirdPersonCamera.SetActive(false);
-
-
+                
                 isInVehicle = true;
 
                 //set player invisible
                 //gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
                 RobModel.SetActive(false);
-
-                //set collider off
-                gameObject.GetComponent<CapsuleCollider>().enabled = false;
-
-                //transform.position = car.transform.position;
                 return;
             }
             if (isInVehicle)
             {
                 Debug.Log("Exit Vehicle");
-
+                
                 //disable car controls
-                GameObject.Find("Car").GetComponent<PrometeoCarController>().enabled = false;
-
+                car.GetComponent<PrometeoCarController>().enabled = false;
+                car.GetComponent<AudioSource>().enabled = false;
+   
                 //allow movement
                 isAllowedMovement = true;
-
                 //enable main cam
                 ThirdPersonCamera.SetActive(true);
 
@@ -219,8 +215,9 @@ public class Character : MonoBehaviour
                 //gameObject.GetComponent<MeshRenderer>().enabled = true;
                 RobModel.SetActive(true);
 
-                //set collider on
-                gameObject.GetComponent<CapsuleCollider>().enabled = true;
+                //player movement is disabled on exit by not having an isAllowedMovement check in Move() method so that it can read again user inputs after the user exited the car. If Move()
+                //returned immediately since isAllowedMovement was false, then it won't read null user Input, so it will be stuck on the previous user input when we were holding WASD.
+                //this prevents player still moving after exiting the car after the player entered the car while holding WASD
 
                 //set player pos beside vehicle
                 isExitingVehicle = true;
@@ -228,17 +225,6 @@ public class Character : MonoBehaviour
             }
 
         }
-       /* if (isCrouching && isMoving)
-        {
-            Debug.Log("Crouch Walking...");
-            animator.SetBool("isCrouchWalking", true);
-        }
-        else if (isCrouching && !isMoving)
-        {
-            Debug.Log("Not Crouch Walking");
-            animator.SetBool("isCrouchWalking", false);
-        }
-*/
 
         //check if player is falling
         if (!characterController.isGrounded && !hasJumped)
@@ -261,22 +247,28 @@ public class Character : MonoBehaviour
             // Debug.Log("Landed");
             hasLanded = false;
         }
-        if (isMoving && !isRunning)
+        //sound to play if player is not running
+        if (!DataHub.PlayerStatus.isCutscenePlaying)
         {
-            if (elapsed > 0.35f)
+            if (isMoving && !isRunning && !isInVehicle)
             {
-                PlayFootsteps();
-                elapsed = 0;
+                if (elapsed > 0.35f)
+                {
+                    PlayFootsteps();
+                    elapsed = 0;
+                }
+            }
+            //sound to play if player is running
+            if (isMoving && isRunning && !isInVehicle)
+            {
+                if (elapsed > 0.25f)
+                {
+                    PlayFootsteps();
+                    elapsed = 0;
+                }
             }
         }
-        if (isMoving && isRunning)
-        {
-            if (elapsed > 0.25f)
-            {
-                PlayFootsteps();
-                elapsed = 0;
-            }
-        }
+       
         //check if player jumped
         if (hasJumped)
         {
@@ -365,12 +357,7 @@ public class Character : MonoBehaviour
     //this method is called in playerinput object events
     public void Move(InputAction.CallbackContext context)
     {
-        if (!isAllowedMovement)
-        {
-            return;
-        }
-
-
+       
         if (context.canceled && !context.performed)
         {
             //       Debug.Log("WASD released");
@@ -392,8 +379,10 @@ public class Character : MonoBehaviour
 
 
         }
-
-        input = context.ReadValue<Vector2>();
+        if (isAllowedMovement)
+            input = context.ReadValue<Vector2>();
+        else
+            input = Vector2.zero;
         //  Debug.Log(input);
         move = new Vector3(input.x, 0, input.y).normalized;
         
@@ -404,7 +393,9 @@ public class Character : MonoBehaviour
     {
         //https://forum.unity.com/threads/learning-new-inputsystem-when-and-how-is-the-cancelled-callback-used.969501/
         if (!isAllowedMovement)
+        {
             return;
+        }
         if (context.performed && !hasJumped)
         {
             //  Debug.Log("Jump pressed");
@@ -435,6 +426,10 @@ public class Character : MonoBehaviour
     }
     public void Run(InputAction.CallbackContext context)
     {
+        if (!isAllowedMovement)
+        {
+            return;
+        }
         if (context.started)
         {
             isRunning = true;
@@ -505,11 +500,6 @@ public class Character : MonoBehaviour
                 teleportTrigger = other.gameObject.transform.GetChild(0).gameObject;
             }
         }
-        if (other.gameObject.TryGetComponent(out IInteractable interactable) && other.gameObject.name.Contains("Placeable") && Input.GetKeyDown(KeyCode.E))
-        {
-            Debug.Log("interacted!");
-            interactable.Interact();
-        }
         if (other.gameObject.name == "Map Guard")
         {
             BringPlayerBackToMap();
@@ -517,7 +507,8 @@ public class Character : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name.Contains("Player Detection Range"))
+
+        if (other.gameObject.name.Contains("Car Entrance"))
         {
             isNearbyVehicle = true;
         }
@@ -595,7 +586,7 @@ public class Character : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.name.Contains("Player Detection Range"))
+        if (other.gameObject.name.Contains("Car Entrance"))
         {
             isNearbyVehicle = false;
         }
@@ -710,12 +701,8 @@ public class Character : MonoBehaviour
             //make object reappear beside player
             //GameObject obj = itemsArray.itemGameObjects.Find(x => x.name == objectHeld.Trim());
             obj.SetActive(true);
-
-            obj.transform.position = new Vector3(gameObject.transform.position.x + 0.8f, gameObject.transform.position.y, gameObject.transform.position.z + 0.8f);
-
-
-            obj.transform.rotation = gameObject.transform.rotation;
-
+            obj.GetComponent<Rigidbody>().useGravity = true;
+            obj.transform.position = new Vector3(transform.position.x + 0.4f, transform.position.y, transform.position.z + 0.4f);
             objectsHeld.Remove(obj);
 
             
@@ -745,6 +732,8 @@ public class Character : MonoBehaviour
     public void SetIsAllowedMovement(bool flag)
     {
         isAllowedMovement = flag;
+        isMoving = flag;
+        isRunning = flag;
     }
     private void BringPlayerBackToMap()
     {

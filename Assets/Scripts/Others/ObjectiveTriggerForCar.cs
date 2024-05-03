@@ -15,10 +15,6 @@ public class ObjectiveTriggerForCar : MonoBehaviour
         {
             DataHub.ObjectiveHelper.hasFoundLevel2Exit = true;
         }
-        if (other.gameObject.name == "CarPark")
-        {
-            DataHub.ObjectiveHelper.hasFoundACar = true;
-        }
         if (other.gameObject.name == "Towering Twins")
         {
             DataHub.ObjectiveHelper.hasReachedToweringTwins = true;

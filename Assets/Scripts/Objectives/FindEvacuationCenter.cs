@@ -5,7 +5,7 @@ using TMPro;
 
 public class FindEvacuationCenter : IObjective
 {
-    public GameObject nextObjective;
+    public GameObject nextObjective, goalLabel;
     private string label = "GOAL 6: Find the nearest evacuation center.";
     private bool isComplete;
     public override void AutoFinish()
@@ -23,7 +23,7 @@ public class FindEvacuationCenter : IObjective
     public override void CompleteObjective()
     {
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
     }
 
@@ -58,6 +58,6 @@ public class FindEvacuationCenter : IObjective
     }
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
 }

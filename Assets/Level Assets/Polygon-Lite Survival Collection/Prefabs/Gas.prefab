@@ -113,7 +113,7 @@ MonoBehaviour:
   explosion: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4,
     type: 3}
   timeBeforeExplosion: 5
-  radius: 15
+  radius: 20
   power: 700
 --- !u!114 &4197147677207182508
 MonoBehaviour:
@@ -141,6 +141,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  tooltipPrefab: {fileID: 0}
 --- !u!54 &8278296768214863019
 Rigidbody:
   m_ObjectHideFlags: 0

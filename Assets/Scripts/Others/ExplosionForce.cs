@@ -53,6 +53,16 @@ public class ExplosionForce : MonoBehaviour
 
         foreach (Collider hit in colliders)
         {
+            if(hit.name == "Large Barrier")
+            {
+                DataHub.ObjectiveHelper.hasExplodedBarrier = true;
+                if (hit.gameObject.activeInHierarchy)
+                {
+                    hit.gameObject.SetActive(false);
+                }
+                
+            }
+
             //explode other explosives caught in explosion
             if(hit.gameObject.TryGetComponent(out ExplosionForce explosive))
             {
@@ -63,6 +73,17 @@ public class ExplosionForce : MonoBehaviour
 
             if (rb != null)
             {
+                if (hit.gameObject.name == "Player")
+                {
+
+                    if (hit.gameObject.TryGetComponent(out Character player))
+                    {
+                        DataHub.PlayerStatus.damageTaken = 40;
+                        player.TakeDamage(DataHub.PlayerStatus.damageTaken);
+                    }
+                    return; //dont add force to player since it does weird rotations that i dont have time to fix XD
+                }
+
                 if (!hasExploded)
                 {
                     Object.Instantiate(explosion, transform.position, transform.rotation);
@@ -74,14 +95,7 @@ public class ExplosionForce : MonoBehaviour
 
 
 
-                if (hit.gameObject.name == "Player")
-                {
-                    
-                    if(hit.gameObject.TryGetComponent(out Character player)){
-                        DataHub.PlayerStatus.damageTaken = 40;
-                        player.TakeDamage(DataHub.PlayerStatus.damageTaken);
-                    }
-                }
+                
                 gameObject.SetActive(false);
             }
 

@@ -33,9 +33,9 @@ public class ConditionSetter : MonoBehaviour
             case "PlankPlaceable":
                 Debug.Log("A plank was placed!");
                 break;
-            case "Axe Large Wood":
+            case "Axe Bookshelf":
                 DataHub.ObjectiveHelper.hasBarrierBeenBroken = true;
-               
+                Debug.Log("Bookshelf broken!");
                 break;
         }
     }
@@ -43,13 +43,14 @@ public class ConditionSetter : MonoBehaviour
     {
         switch (DataHub.ObjectInteracted.objectPlacedOn)
         {
-            case "PlaceableNeedsPlank":
+            case "PlaceablePlank":
                 Debug.Log("A plank was placed!");
                 break;
-            case "LobbyDoorNeedsKeys":
+            case "PlaceableKeys":
                 DataHub.ObjectiveHelper.hasKeyBeenPlaced = true;
+                Debug.Log("keys placed!");
                 break;
-            case "CarNeedsJerry":
+            case "PlaceableJerry":
                 DataHub.ObjectiveHelper.hasFilledCarWithGas = true;
                 break;
 

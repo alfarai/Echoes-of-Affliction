@@ -14,8 +14,8 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     private DialogueText[] dialogue = new DialogueText[2];
     [SerializeField]
     private CinemachineVirtualCamera speakerCam;
-    private bool isConversing,flag;
-
+    private bool isConversing, isOutlineActive;
+    private Vector3 labelPos;
     public GameObject tooltipPrefab;
     private GameObject clone;
 
@@ -33,6 +33,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         if(gameObject.name == "Young Boy")
         {
             DataHub.ObjectiveHelper.hasTalkedWithYoungBoy = true;
+            
         }
         if (gameObject.name == "Dan")
         {
@@ -51,6 +52,8 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         //disable player movement
         player.SetIsAllowedMovement(false);
 
+        //disable ui
+        DataHub.PlayerStatus.isTalking = true;
         //set camera to speaker before initializing dialogue
         if (!dialogueController.GetIsInitialized())
         {
@@ -66,6 +69,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     }
     private void EndConversation()
     {
+
         if (gameObject.name == "Phone")
         {
             DataHub.ObjectiveHelper.hasFinishedCallingDan = true;
@@ -74,6 +78,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         isConversing = false;
         //disable player movement
         player.SetIsAllowedMovement(true);
+        DataHub.PlayerStatus.isTalking = false;
     }
     private void Talk(DialogueText dialogue)
     {
@@ -84,6 +89,9 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
+        labelPos = transform.position;
+        labelPos.y += 1.2f;
+        labelPos.x += 1.2f;
     }
 
     // Update is called once per frame
@@ -116,12 +124,20 @@ public class TalkInteraction : MonoBehaviour, IInteractable
 
     public void InstantiateLabel()
     {
-        clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
-        clone.GetComponentInChildren<TextMesh>().text = gameObject.name;
+        clone = Instantiate(tooltipPrefab, labelPos, Quaternion.identity);
+        clone.GetComponentInChildren<TextMesh>().text = "Talk";
 
     }
     public void DestroyLabel()
     {
         Destroy(clone);
+    }
+    public void EnableOutline(bool flag)
+    {
+        //if already active, dont enable
+        if (isOutlineActive && flag)
+            return;
+        isOutlineActive = flag;
+        gameObject.GetComponent<Outline>().enabled = flag;
     }
 }

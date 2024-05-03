@@ -10,11 +10,14 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     private Character player;
     public GameObject tooltipPrefab;
     private GameObject clone;
+    private Vector3 labelPos;
+    private bool isOutlineActive;
     public void Interact()
     {
-        gameObject.GetComponent<Rigidbody>().useGravity = true;
+        gameObject.GetComponent<Rigidbody>().isKinematic = false;
         player.HoldObject(gameObject.name,gameObject);
         DestroyLabel();
+
 
         /*DataHub.ObjectInteracted.interactedObj = gameObject;
         DataHub.ObjectInteracted.interactable = player.GetObjectHeld();
@@ -28,6 +31,8 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     // Start is called before the first frame update
     void Start()
     {
+        labelPos = transform.position;
+        labelPos.y -= 1.1f;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
     }
 
@@ -39,12 +44,20 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     
     public void InstantiateLabel()
     {
-        clone = Instantiate(tooltipPrefab,transform.position,Quaternion.identity);
-        clone.GetComponentInChildren<TextMesh>().text = gameObject.name;
+        clone = Instantiate(tooltipPrefab,labelPos,Quaternion.identity);
+        //clone.GetComponentInChildren<TextMesh>().text = gameObject.name;
         
     }
     public void DestroyLabel()
     {
         Destroy(clone);
+    }
+    public void EnableOutline(bool flag)
+    {
+        //if already active, dont enable
+        if (isOutlineActive && flag)
+            return;
+        isOutlineActive = flag;
+        gameObject.GetComponent<Outline>().enabled = flag;
     }
 }

@@ -5,7 +5,7 @@ using TMPro;
 
 public class FindACar : IObjective
 {
-    public GameObject nextObjective;
+    public GameObject nextObjective, cutscene, goalLabel;
     private string label = "GOAL 4: Find a car.";
     private bool isComplete;
     public override void AutoFinish()
@@ -15,15 +15,19 @@ public class FindACar : IObjective
 
     public override void CallNextObjective()
     {
-
-        gameObject.SetActive(false);
-        nextObjective.SetActive(true);
+        cutscene.SetActive(true); //isCutscenePlaying is set to true here. Set to false after execution
+        if (!DataHub.PlayerStatus.isCutscenePlaying) 
+        {
+            gameObject.SetActive(false);
+            nextObjective.SetActive(true);
+        }
+        
     }
 
     public override void CompleteObjective()
     {
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
     }
 
@@ -58,6 +62,6 @@ public class FindACar : IObjective
     }
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+       goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
 }

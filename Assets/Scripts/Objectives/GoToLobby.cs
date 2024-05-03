@@ -5,9 +5,9 @@ using TMPro;
 public class GoToLobby : IObjective
 {
 
-    public GameObject nextObjective;
+    public GameObject nextObjective, goalLabel;
 
-    
+
 
     private string label = "GOAL 2: Go to the lobby.";
     private bool isComplete;
@@ -54,7 +54,7 @@ public class GoToLobby : IObjective
     {
 
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
 
 
@@ -68,6 +68,6 @@ public class GoToLobby : IObjective
     }
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
 }

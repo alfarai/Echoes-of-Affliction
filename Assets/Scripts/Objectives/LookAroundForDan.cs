@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 public class LookAroundForDan : IObjective
 {
-    public GameObject nextObjective;
+    public GameObject nextObjective, goalLabel;
     private string label = "GOAL 7: Look around for Dan.";
     private bool isComplete;
     public override void AutoFinish()
@@ -22,7 +22,7 @@ public class LookAroundForDan : IObjective
     public override void CompleteObjective()
     {
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
     }
 
@@ -41,8 +41,10 @@ public class LookAroundForDan : IObjective
     // Update is called once per frame
     void Update()
     {
+       
         if (DataHub.ObjectiveHelper.hasTalkedWithMarshall && DataHub.ObjectiveHelper.hasTalkedWithYoungBoy && !isComplete)
         {
+            
             CompleteObjective();
         }
         if (Input.GetKeyDown(KeyCode.Comma))
@@ -56,6 +58,6 @@ public class LookAroundForDan : IObjective
     }
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
 }

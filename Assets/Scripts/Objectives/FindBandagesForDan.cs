@@ -10,7 +10,7 @@ public class FindBandagesForDan : IObjective
     private TextMeshProUGUI timerText;
     private float totalMinutes;
     private int wholeMinute, seconds;
-    public GameObject nextObjective;
+    public GameObject nextObjective, goalLabel;
     private string label = "GOAL 11: Find bandages for Dan.";
     private bool isComplete;
     public override void AutoFinish()
@@ -95,6 +95,6 @@ public class FindBandagesForDan : IObjective
 
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
 }

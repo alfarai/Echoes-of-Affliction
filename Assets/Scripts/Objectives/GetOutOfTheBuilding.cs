@@ -8,8 +8,7 @@ using UnityEngine.SceneManagement;
 public class GetOutOfTheBuilding : IObjective
 {
 
-    public GameObject nextObjective;
-    public GameObject level2AccessTrigger;
+    public GameObject nextObjective, goalLabel;
     public GameObject door;
 
     private bool isComplete;
@@ -36,8 +35,7 @@ public class GetOutOfTheBuilding : IObjective
     public override void CallNextObjective()
     {
         
-        //exit building trigger set active
-        level2AccessTrigger.SetActive(true);
+
 
         gameObject.SetActive(false);
         nextObjective.SetActive(true);
@@ -74,7 +72,7 @@ public class GetOutOfTheBuilding : IObjective
     {
 
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
 
 
@@ -89,7 +87,7 @@ public class GetOutOfTheBuilding : IObjective
     }
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
     public void OpenDoor()
     {

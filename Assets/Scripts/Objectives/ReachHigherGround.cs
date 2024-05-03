@@ -5,7 +5,7 @@ using TMPro;
 
 public class ReachHigherGround : IObjective
 {
-    public GameObject nextObjective;
+    public GameObject nextObjective, goalLabel;
     private string label = "GOAL 9: Reach higher ground";
     private bool isComplete;
     public override void AutoFinish()
@@ -23,7 +23,7 @@ public class ReachHigherGround : IObjective
     public override void CompleteObjective()
     {
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
     }
 
@@ -43,7 +43,8 @@ public class ReachHigherGround : IObjective
     // Update is called once per frame
     void Update()
     {
-        if (DataHub.ObjectiveHelper.hasReachedHigherGround && !isComplete)
+
+        if (DataHub.ObjectiveHelper.hasReachedHigherGround && !isComplete && DataHub.ObjectiveHelper.hasExplodedBarrier)
         {
             CompleteObjective();
         }
@@ -58,6 +59,6 @@ public class ReachHigherGround : IObjective
     }
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
 }

@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06f9ac8180ee8df4c90a4a9cf86e061f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitsBeforeBreaking: 0
+  hitsBeforeBreaking: 3
   BreakEvent:
     m_PersistentCalls:
       m_Calls:
@@ -123,3 +123,5 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  timeIntervalBeforeNextHit: 1
+  tooltipPrefab: {fileID: 0}

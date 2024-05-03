@@ -6,15 +6,15 @@ using UnityEngine.Events;
 using TMPro;
 public class PlaceInteraction : MonoBehaviour, IInteractable
 {
-    public GameObject template;
     public bool doesThisConsume;
     public UnityEvent PlaceEvent;
     private Character player;
     public int maxPlaceableCount; //0 if it this does not consume
     private int placeCount;
-    public GameObject text;
-    //public GameObject tooltipPrefab;
-    //private GameObject clone;
+    public GameObject tooltipPrefab;
+    private GameObject clone;
+    private Vector3 labelPos;
+    private bool isOutlineActive;
 
     public void Interact()
     {
@@ -41,50 +41,36 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
                 player.DropObjectHeld(true);
 
                 DataHub.ObjectInteracted.objectPlacedOn = gameObject.name;
-
-
-
+                DestroyLabel();
                 if (placeCount == maxPlaceableCount)
                 {
                     //invoke place event
                     PlaceEvent.Invoke();
                 }
-
-                
                 return;
             }
             //place object held to template by setting position
-            //GameObject obj = player.itemsArrayObj.GetComponent<ItemsArray>().itemGameObjects.Find(x => x.name == player.GetObjectHeld());
             GameObject obj = player.GetGameObjectHeld();
-            Collider objCol = obj.GetComponent<Collider>();
+            //Collider objCol = obj.GetComponent<Collider>();
             if (!obj.activeSelf)
             {
                 obj.SetActive(true);
             }
-            obj.transform.position = template.transform.position;
-            obj.transform.rotation = template.transform.rotation;
-            //template.GetComponent<FixedJoint>().connectedBody = obj.GetComponent<Rigidbody>();
-            objCol.attachedRigidbody.useGravity = false;
-            //obj.GetComponent<HoldInteraction>().enabled = false;
-            //objCol.attachedRigidbody.useGravity = false;
+            obj.transform.position = transform.position;
+            obj.transform.rotation = transform.rotation;
+            obj.GetComponent<Rigidbody>().isKinematic = true;
+            
 
             //remove object held
             player.DropObjectHeld(true);
 
-
-            //set datahub values
-            /*DataHub.ObjectInteracted.interactedObj = gameObject;
-            DataHub.ObjectInteracted.interactable = player.GetObjectHeld();
-            DataHub.ObjectInteracted.interaction = "place";*/
-
             DataHub.ObjectInteracted.objectPlacedOn = gameObject.name;
-            
+            DestroyLabel();
             //invoke place event
             PlaceEvent.Invoke();
             return;
             
         }
-        //add else here for if it doesnt match
         else
         {
             Debug.Log("This doesn't belong here...");
@@ -95,25 +81,29 @@ public class PlaceInteraction : MonoBehaviour, IInteractable
     // Start is called before the first frame update
     void Start()
     {
+        labelPos = transform.position;
+        labelPos.y -= 1.1f;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
-        
     }
 
     
     public void InstantiateLabel()
     {
-        /*clone = Instantiate(tooltipPrefab, transform.position, Quaternion.identity);
-        clone.GetComponentInChildren<TextMesh>().text = "You need to place something here...";
-        clone.GetComponentInChildren<TextMesh>().fontSize = 230;
-        clone.GetComponentInChildren<Image>().enabled = false;*/
-        text.SetActive(true);
-        text.GetComponentInChildren<TextMeshProUGUI>().text = "You can place something here...";
+        clone = Instantiate(tooltipPrefab, labelPos, Quaternion.identity);
+        clone.GetComponentInChildren<TextMesh>().text = "Place";
 
     }
     public void DestroyLabel()
     {
-        //Destroy(clone);
-        text.SetActive(false);
-        text.GetComponentInChildren<TextMeshProUGUI>().text = "";
+        Destroy(clone);
+
+    }
+    public void EnableOutline(bool flag)
+    {
+        //if already active, dont enable
+        if (isOutlineActive && flag)
+            return;
+        isOutlineActive = flag;
+        gameObject.GetComponent<Outline>().enabled = flag;
     }
 }

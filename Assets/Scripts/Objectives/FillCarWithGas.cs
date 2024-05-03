@@ -5,7 +5,7 @@ using TMPro;
 
 public class FillCarWithGas : IObjective
 {
-    public GameObject nextObjective;
+    public GameObject nextObjective, goalLabel;
     private string label = "GOAL 5: Fill the car with gas.";
     private bool isComplete;
     public override void AutoFinish()
@@ -23,7 +23,7 @@ public class FillCarWithGas : IObjective
     public override void CompleteObjective()
     {
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal completed!");
         Invoke("CallNextObjective", 5f);
     }
 
@@ -58,6 +58,6 @@ public class FillCarWithGas : IObjective
     }
     public override void SetGoalText(string label)
     {
-        GameObject.Find("Objective Text").GetComponent<TextMeshProUGUI>().text = label;
+        goalLabel.GetComponent<TextMeshProUGUI>().text = label;
     }
 }

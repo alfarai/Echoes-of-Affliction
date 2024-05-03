@@ -34,7 +34,7 @@ public class ObjectiveConditionHelper
     public bool hasFoundTelephone, hasFinishedCallingDan;
 
     //Objective 9
-    public bool hasReachedHigherGround;
+    public bool hasReachedHigherGround, hasExplodedBarrier;
 
     //Objective 10
     public bool hasReachedToweringTwins;

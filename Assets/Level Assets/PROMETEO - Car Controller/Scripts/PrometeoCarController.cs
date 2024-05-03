@@ -16,7 +16,8 @@ using UnityEngine.UI;
 
 public class PrometeoCarController : MonoBehaviour
 {
-
+    [Space(20)]
+    public PlaceInteraction place; //place interaction of car
     //CAR SETUP
 
     [Space(20)]
@@ -159,6 +160,8 @@ public class PrometeoCarController : MonoBehaviour
     float RRWextremumSlip;
 
     private AudioManager audioManager;
+    private bool hasDisabledPlace;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -201,6 +204,7 @@ public class PrometeoCarController : MonoBehaviour
         RRwheelFriction.asymptoteValue = rearRightCollider.sidewaysFriction.asymptoteValue;
         RRwheelFriction.stiffness = rearRightCollider.sidewaysFriction.stiffness;
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+
 
         // We save the initial pitch of the car engine sound.
         if (carEngineSound != null)
@@ -284,6 +288,10 @@ public class PrometeoCarController : MonoBehaviour
 
     }
 
+    void LateUpdate()
+    {
+        
+    }
     // Update is called once per frame
     void Update()
     {
@@ -309,6 +317,11 @@ public class PrometeoCarController : MonoBehaviour
         In this part of the code we specify what the car needs to do if the user presses W (throttle), S (reverse),
         A (turn left), D (turn right) or Space bar (handbrake).
         */
+        if (DataHub.ObjectiveHelper.hasFilledCarWithGas && !hasDisabledPlace)
+        {
+            hasDisabledPlace = true;
+            GameObject.Find("PlaceableJerry").GetComponent<PlaceInteraction>().enabled = false;
+        }
         if (useTouchControls && touchControlsSetup)
         {
 
@@ -359,7 +372,7 @@ public class PrometeoCarController : MonoBehaviour
 
         }
         //if (DataHub.ObjectiveHelper.hasFilledCarWithGas)
-        else if(true)
+        else if (true)
         {
 
             if (Input.GetKey(KeyCode.W))

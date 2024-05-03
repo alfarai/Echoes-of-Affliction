@@ -7,6 +7,7 @@ public class Aftershock : IEvent
 {
 
     public GameObject rocksToSpawn;
+    public GameObject ObjectsToDelete;
     //public GameObject buildingsToDestroy;
     public GameObject[] buildingsToDestroy;
     protected override void PerformAction()
@@ -14,8 +15,9 @@ public class Aftershock : IEvent
         Debug.Log("Aftershock triggered!");
         DataHub.WorldEvents.hasFirstAftershockHappened = true;
         //camshake https://www.youtube.com/watch?v=ACf1I27I6Tk&ab_channel=CodeMonkey
-        CinemachineFreeLook cam = GameObject.Find("Third Person Camera").GetComponent<CinemachineFreeLook>();
-        
+        CinemachineFreeLook cam = GameObject.Find("Move Camera").GetComponent<CinemachineFreeLook>();
+
+        ObjectsToDelete.SetActive(false);
         //block exit (spawn rocks)
         rocksToSpawn.SetActive(true);
         //buildingsToDestroy.SetActive(false);

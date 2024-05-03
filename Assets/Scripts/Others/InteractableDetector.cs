@@ -5,20 +5,21 @@ using UnityEngine;
 public class InteractableDetector : MonoBehaviour
 {
     public float detectionRadius = 1;
-    public float yOffset = 2;
-    private Vector3 position;
     // Start is called before the first frame update
     void Start()
     {
-        position = new Vector3(transform.position.x, transform.position.y + yOffset, transform.position.z);
+        transform.localScale = new Vector3(detectionRadius, detectionRadius, detectionRadius);
     }
 
     
     void OnTriggerEnter(Collider col)
     {
+        
         if (col.gameObject.TryGetComponent(out IInteractable interactable))
         {
             interactable.InstantiateLabel();
+            interactable.EnableOutline(true);
+
         }
     }
     void OnTriggerExit(Collider col)
@@ -26,18 +27,14 @@ public class InteractableDetector : MonoBehaviour
         if (col.gameObject.TryGetComponent(out IInteractable interactable))
         {
             interactable.DestroyLabel();
+            interactable.EnableOutline(false);
         }
     }
-    void OnTriggerStay(Collider col)
+    void OnTriggerStay(Collider other)
     {
-        if (col.gameObject.TryGetComponent(out IInteractable interactable))
+        if (other.gameObject.TryGetComponent(out IInteractable interactable) && other.gameObject.name.Contains("Placeable") && Input.GetKeyDown(KeyCode.E))
         {
-            
+            interactable.Interact();
         }
-    }
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.black;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }
