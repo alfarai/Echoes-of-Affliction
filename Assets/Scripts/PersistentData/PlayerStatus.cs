@@ -10,9 +10,9 @@ public class PlayerStatus
     public int focusedSlot = 0; //default is first slot
    
 
-    public int health;
-    public int maxHealth = 100;
-    public int damageTaken;
+    public float health;
+    public float maxHealth = 100;
+    public float damageTaken;
 
     public bool isAlive;
     public bool isTalking;

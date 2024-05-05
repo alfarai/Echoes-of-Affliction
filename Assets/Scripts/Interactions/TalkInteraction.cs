@@ -21,6 +21,11 @@ public class TalkInteraction : MonoBehaviour, IInteractable
 
     public void Interact() 
     {
+        //disable interaction if player has failed
+        if (DataHub.ObjectiveHelper.hasFailedToGiveDanBandages)
+        {
+            return;
+        }
         StartConversation();
         
 
@@ -59,9 +64,10 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         {
             speakerCam.enabled = true;
         }
-        if (player.GetObjectHeld().Trim().Equals("Bandages"))
+        if (player.GetObjectHeld().Trim().Equals("Bandage"))
         {
             DataHub.ObjectiveHelper.hasGivenDanBandages = true;
+            player.DropObjectHeld(true);
             Talk(dialogue[1]);
             return;
         }

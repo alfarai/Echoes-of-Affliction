@@ -8,15 +8,10 @@ public class UIManager : MonoBehaviour
 {
     public GameObject ui;
     public GameObject[] inventorySlots;
-    public GameObject itemText;
+    public GameObject[] inventoryBorderSlots;
+    public TextMeshProUGUI itemText;
     public GameObject playerObj;
-
-    public TextMeshProUGUI activeItem;
-
-    public Sprite activeSprite;
-    public Sprite inactiveSprite;
-
-
+    public Sprite inactive, active; //png 
     private Inventory inv;
     private bool isUIShown = true;
 
@@ -57,6 +52,7 @@ public class UIManager : MonoBehaviour
             for (int i = 0; i < DataHub.PlayerStatus.invSlots; i++)
             {
                 inventorySlots[i].GetComponent<Image>().sprite = null;
+                inventorySlots[i].GetComponent<Image>().color = new Color(0,0,0,0); //make it invisible
             }
         }
         for (int i = 0; i < DataHub.PlayerStatus.invSlots; i++)
@@ -70,14 +66,12 @@ public class UIManager : MonoBehaviour
                 {
                     display = "";
                 }
-                //itemText.GetComponent<TextMeshProUGUI>().text = display;
-                activeItem.text = display;
+                itemText.text = display;
             }
             catch //if inventory slot is empty
             {
                 display = "";
-                // itemText.GetComponent<TextMeshProUGUI>().text = display;
-                activeItem.text = display;
+                itemText.text = display;
             }
 
 
@@ -87,10 +81,12 @@ public class UIManager : MonoBehaviour
             try
             {
                 inventorySlots[i].GetComponent<Image>().sprite = inventory[i].GetIcon();
+                inventorySlots[i].GetComponent<Image>().color = new Color(0, 0, 0, 255);
             }
             catch
             {
                 inventorySlots[i].GetComponent<Image>().sprite = null;
+                inventorySlots[i].GetComponent<Image>().color = new Color(0, 0, 0, 0); //make it invisible
             }
 
         }
@@ -102,11 +98,9 @@ public class UIManager : MonoBehaviour
     {
         for (int i = 0; i < DataHub.PlayerStatus.invSlots; i++)
         {
-            //inventorySlots[i].GetComponent<Image>().color = new Color32(255, 255, 255,100);
-            inventorySlots[i].GetComponent<Image>().sprite = inactiveSprite;
+            inventoryBorderSlots[i].GetComponent<Image>().sprite = inactive;
         }
 
-        //inventorySlots[DataHub.PlayerStatus.focusedSlot].GetComponent<Image>().color = new Color32(69, 69, 69,50);
-        inventorySlots[DataHub.PlayerStatus.focusedSlot].GetComponent<Image>().sprite = activeSprite;
+        inventoryBorderSlots[DataHub.PlayerStatus.focusedSlot].GetComponent<Image>().sprite = active;
     }
 }

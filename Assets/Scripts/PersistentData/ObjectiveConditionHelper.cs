@@ -42,8 +42,8 @@ public class ObjectiveConditionHelper
 
     //Objective 11
 
-    public bool hasGivenDanBandages;
-    
+    public bool hasGivenDanBandages, hasFailedToGiveDanBandages;
+
     //Objective 12
     public bool hasReachedChopper;
 

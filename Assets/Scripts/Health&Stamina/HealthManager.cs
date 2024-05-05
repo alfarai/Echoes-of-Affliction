@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class HealthManager: MonoBehaviour
 {
-    public int maxHealth = 100;
-    private int currentHealth;
+    public float maxHealth = 100;
+    private float currentHealth;
 
     
     public UnityEvent HealthUIChangeEvent;
@@ -53,7 +53,7 @@ public class HealthManager: MonoBehaviour
         // Handle player death here (e.g., restart level, game over screen, etc.)
         Debug.Log("Player died.");
     }
-    private int GetCurrentHealth()
+    private float GetCurrentHealth()
     {
         return DataHub.PlayerStatus.health;
     }

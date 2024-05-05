@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 using UnityEngine.Events;
+using Cinemachine;
 
 
 public class Character : MonoBehaviour
 {
+    public Animator animator;
     private AudioManager audio;
     private StaminaManager staminaManager;
     private CharacterController characterController;
@@ -15,9 +17,8 @@ public class Character : MonoBehaviour
     private ItemsArray itemsArray;
     private Vector3 place;
     private bool hasClickedTPLocation;
-    
+
     private RaycastHit hit;
-    private Animator animator;
 
     private Vector2 input;
     private Vector3 move;
@@ -28,17 +29,17 @@ public class Character : MonoBehaviour
     public List<GameObject> objectsHeld = new List<GameObject>();
 
 
-    private float gravity = -8.8f;
+    private float gravity = -6f;
 
-    private float verticalVelocity;
+    private float verticalVelocity, previousVerticalVelocity;
     private float currentVelocity;
-    private bool hasJumped, hasLanded, isFalling, isRunning, isMoving, isAllowedMovement = true;
+    private bool hasJumped, hasLanded, isFalling, isRunning, isWalking, isAllowedMovement = true;
     private bool isPlayerOnPlaceable = false;
     private float speedTemp;
 
     //public Vector3 objectPosition;
     public string objectHeld = "EmptyObj";
-    public bool isOnTeleportZone, isTeleporting,isNearbyVehicle,isInVehicle,isExitingVehicle;
+    public bool isOnTeleportZone, isTeleporting, isNearbyVehicle, isInVehicle, isExitingVehicle;
     public static event Action onJump;
 
     public Transform camera;
@@ -47,16 +48,19 @@ public class Character : MonoBehaviour
     public GameObject itemsArrayObj;
     public float pushPower = 2.0f;
     [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float playerVelocity= 5f, walkingSpeed = 5f, sprintingSpeed = 9f;
+    [SerializeField] private float playerVelocity = 5f, walkingSpeed = 5f, sprintingSpeed = 9f;
     [SerializeField] private float gravityMultiplier = 3.0f;
     [SerializeField] private float jumpPower = 3f;
+    [SerializeField] private float fallThresholdVelocity = 5f;
 
     public UnityEvent ExitTrigger, EnterTrigger, TakeDamageEvent;
     private GameObject car;
-    private float elapsed;
+    private float elapsed, timeSinceLastJump;
     public List<AudioClip> feet;
     private AudioSource playerAudioSource;
     private GameObject RobModel;
+    private bool canJump = true;
+    public float jumpInterval = 1f;
 
     private void Awake()
     {
@@ -66,6 +70,7 @@ public class Character : MonoBehaviour
 
     void Start()
     {
+        //animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
         //hpScript = hpObj.GetComponent<UpdateHP>();
         //hp = hpScript.GetHP(); //set hp
@@ -81,47 +86,76 @@ public class Character : MonoBehaviour
         playerAudioSource = gameObject.GetComponent<AudioSource>();
         RobModel = GameObject.Find("Rob_Animated");
     }
-   
+
     private void FixedUpdate()
     {
-        
+
         if (isOnTeleportZone && isTeleporting)
         {
             transform.position = teleportTrigger.transform.position;
             isTeleporting = false;
-            
+
         }
         if (isExitingVehicle)
         {
             GameObject car = GameObject.Find("Car Entrance");
             transform.position = new Vector3(car.transform.position.x, car.transform.position.y, car.transform.position.z);
             transform.rotation = car.transform.rotation;
-            if(transform.position.x >= car.transform.position.x)
+            if (transform.position.x >= car.transform.position.x)
             {
                 isExitingVehicle = false;
             }
-            
-            
+
+
         }
-        
+
     }
     // Update is called once per frame
     private void Update()
     {
+        timeSinceLastJump += Time.deltaTime;
+        if(timeSinceLastJump >= jumpInterval)
+        {
+            canJump = true;
+        }
+        
+
+        if ((isWalking && hasJumped) || (isRunning && hasJumped))
+        {
+            animator.SetBool("isRunningJump", true);
+            StartCoroutine(ResetRunningJumpFlagAfterDelay());
+        }
+        if (animator.GetBool("isJumping"))
+        {
+            StartCoroutine(ResetJumpFlagAfterDelay());
+        }
+
+
+        //applying fall damage on isGrounded
+        if (characterController.isGrounded)
+        {
+            if (previousVerticalVelocity < -fallThresholdVelocity)
+            {
+                DataHub.PlayerStatus.damageTaken = Mathf.Abs(previousVerticalVelocity + fallThresholdVelocity) * 10; //damage is too small so just multiply by 10
+                TakeDamage(DataHub.PlayerStatus.damageTaken);
+                previousVerticalVelocity = verticalVelocity;
+            }
+        }
         elapsed += Time.deltaTime;
         ApplyGravity();
         if (isAllowedMovement || !isInVehicle)
         {
-           ApplyRotationAndMovement();
+            ApplyRotationAndMovement();
         }
-        
-        
+
+
         if (!staminaManager.CanSprint())
         {
             SetPlayerSpeed(walkingSpeed);
             isRunning = false;
+            animator.SetBool("isRunning", isRunning);
         }
-        
+
         if (Input.GetKeyDown(KeyCode.G))
         {
             DropObjectHeld(false);
@@ -130,6 +164,8 @@ public class Character : MonoBehaviour
         {
             isTeleporting = true;
         }
+        //for camera fov change when running
+
         //zoom in
         if (Input.GetMouseButtonDown(1))
         {
@@ -143,114 +179,54 @@ public class Character : MonoBehaviour
             FocusCamera.SetActive(false);
         }
 
-        /*if (Input.GetKeyDown(KeyCode.Q) && isOnTeleportZone)
-        {
-            GoToLocation();
-        }*/
-        /*if (Input.GetKeyDown(KeyCode.C))
-        {
-
-
-            if (!isCrouching)
-            {
-                Debug.Log("Crouching...");
-                //animator.SetBool("isCrouching", true);
-                isCrouching = true;
-                if (isCrouching && isMoving)
-                {
-                    Debug.Log("Crouch Walking...");
-                    //animator.SetBool("isCrouchWalking", true);
-                    speed = speed / 2;
-                }
-
-            }
-            else if (isCrouching)
-            {
-                Debug.Log("Not Crouching");
-                //animator.SetBool("isCrouching", false);
-                isCrouching = false;
-            }
-
-
-        }*/
         if (Input.GetKeyDown(KeyCode.F))
         {
             if (isNearbyVehicle && !isInVehicle)
             {
                 Debug.Log("Entering Vehicle...");
-                
+
                 //enable car controls
                 car.GetComponent<PrometeoCarController>().enabled = true;
                 car.GetComponent<AudioSource>().enabled = true;
-                
+
                 //disable movement
-                isAllowedMovement = false; 
-                
+                isAllowedMovement = false;
+
                 //disable main cam
                 ThirdPersonCamera.SetActive(false);
-                
-                isInVehicle = true;
 
-                //set player invisible
-                //gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
+                isInVehicle = true;
                 RobModel.SetActive(false);
                 return;
             }
             if (isInVehicle)
             {
                 Debug.Log("Exit Vehicle");
-                
+
                 //disable car controls
                 car.GetComponent<PrometeoCarController>().enabled = false;
                 car.GetComponent<AudioSource>().enabled = false;
-   
+
                 //allow movement
                 isAllowedMovement = true;
                 //enable main cam
                 ThirdPersonCamera.SetActive(true);
 
                 isInVehicle = false;
-
-                //set player visible
-                //gameObject.GetComponent<MeshRenderer>().enabled = true;
                 RobModel.SetActive(true);
-
-                //player movement is disabled on exit by not having an isAllowedMovement check in Move() method so that it can read again user inputs after the user exited the car. If Move()
-                //returned immediately since isAllowedMovement was false, then it won't read null user Input, so it will be stuck on the previous user input when we were holding WASD.
-                //this prevents player still moving after exiting the car after the player entered the car while holding WASD
 
                 //set player pos beside vehicle
                 isExitingVehicle = true;
-                
+
             }
 
         }
 
-        //check if player is falling
-        if (!characterController.isGrounded && !hasJumped)
-        {
-            hasJumped = false;
-            isFalling = true;
-            hasLanded = false;
-            //animator.SetBool("isJumping", hasJumped);
-            //animator.SetBool("isGrounded", hasLanded);
-            //animator.SetBool("isFalling", isFalling);
-        }
-        //check if player landed
-        if (characterController.isGrounded && isFalling)
-        {
 
-            hasLanded = true;
-            isFalling = false;
-            //animator.SetBool("isGrounded", hasLanded);
-            //animator.SetBool("isFalling", isFalling);
-            // Debug.Log("Landed");
-            hasLanded = false;
-        }
         //sound to play if player is not running
         if (!DataHub.PlayerStatus.isCutscenePlaying)
         {
-            if (isMoving && !isRunning && !isInVehicle)
+            if (isWalking && !isRunning && !isInVehicle)
             {
                 if (elapsed > 0.35f)
                 {
@@ -259,7 +235,7 @@ public class Character : MonoBehaviour
                 }
             }
             //sound to play if player is running
-            if (isMoving && isRunning && !isInVehicle)
+            if (isWalking && isRunning && !isInVehicle)
             {
                 if (elapsed > 0.25f)
                 {
@@ -268,28 +244,9 @@ public class Character : MonoBehaviour
                 }
             }
         }
-       
-        //check if player jumped
-        if (hasJumped)
-        {
-            if (characterController.isGrounded)
-            {
-                hasJumped = false;
-                hasLanded = true;
-                isFalling = false;
-                //animator.SetBool("isJumping", hasJumped);
-                //animator.SetBool("isGrounded", hasLanded);
-                //animator.SetBool("isFalling", isFalling);
-                //Debug.Log("Landed");
 
-            }
-            else
-            {
-                isFalling = true;
-                //animator.SetBool("isFalling", isFalling);
-                // Debug.Log("Falling...");
-            }
-        }
+
+
 
 
 
@@ -299,17 +256,6 @@ public class Character : MonoBehaviour
     private void PlayFootsteps()
     {
         playerAudioSource.PlayOneShot(feet[UnityEngine.Random.Range(0, feet.Count)]);
-
-    }
-
-    private void OnEnable()
-    {
-
-
-    }
-
-    private void OnDisable()
-    {
 
     }
 
@@ -341,10 +287,13 @@ public class Character : MonoBehaviour
         if (characterController.isGrounded && verticalVelocity < 0.0f)
         {
             verticalVelocity = -1.0f;
+
         }
         else
         {
-            verticalVelocity += gravity * gravityMultiplier * Time.deltaTime;
+
+            verticalVelocity += gravity * Time.deltaTime;
+            previousVerticalVelocity = verticalVelocity;
         }
         moveDir = Vector3.zero;
         moveDir.y = verticalVelocity;
@@ -357,26 +306,26 @@ public class Character : MonoBehaviour
     //this method is called in playerinput object events
     public void Move(InputAction.CallbackContext context)
     {
-       
+
         if (context.canceled && !context.performed)
         {
-            //       Debug.Log("WASD released");
 
-            //animator.SetBool("isWalking", false);
-            isMoving = false;
-            if (!isMoving)
+            isWalking = false;
+            isRunning = false;
+            animator.SetBool("isWalking", isWalking);
+            animator.SetBool("isRunning", isRunning);
+            if (!isWalking)
             {
                 //    Debug.Log("Not Crouch Walking");
                 //animator.SetBool("isCrouchWalking", false);
                 playerVelocity = speedTemp;
             }
+
         }
         if (context.started && !context.performed)
         {
-            //    Debug.Log("WASD pressed...");
-            //animator.SetBool("isWalking", true);
-            isMoving = true;
-
+            isWalking = true;
+            animator.SetBool("isWalking", isWalking);
 
         }
         if (isAllowedMovement)
@@ -385,7 +334,7 @@ public class Character : MonoBehaviour
             input = Vector2.zero;
         //  Debug.Log(input);
         move = new Vector3(input.x, 0, input.y).normalized;
-        
+
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
     }
@@ -396,65 +345,92 @@ public class Character : MonoBehaviour
         {
             return;
         }
-        if (context.performed && !hasJumped)
+        if (context.performed && !hasJumped && canJump && characterController.isGrounded && (!IsJumpAnimationPlaying() || !IsRunningJumpAnimationPlaying()))
         {
-            //  Debug.Log("Jump pressed");
             hasJumped = true;
-            hasLanded = false;
-            isFalling = true;
-            //animator.SetBool("isJumping", hasJumped);
-            //animator.SetBool("isGrounded", hasLanded);
+            animator.SetBool("isJumping", hasJumped);
             verticalVelocity += jumpPower;
+            canJump = false;
+            timeSinceLastJump = 0f;
         }
-
-
-        /*if (context.performed) && hasJumped)
-        {
-            Debug.Log("In air...");
-            //animator.SetBool("isJumping", false);
-        }
-        if ((!context.started && characterController.isGrounded) || hasJumped)
-        {
-            Debug.Log("Landed");
-            hasJumped = false;
-            //animator.SetBool("isJumping", false);
-        }*/
-
-
-
-
     }
     public void Run(InputAction.CallbackContext context)
     {
-        if (!isAllowedMovement)
+        if (!isAllowedMovement || !isWalking)
         {
             return;
         }
-        if (context.started)
+        if (isWalking)
         {
-            isRunning = true;
-            //animator.SetBool("isRunning", isRunning);
+            if (context.started)
+            {
 
-            SetPlayerSpeed(sprintingSpeed);
-            staminaManager.ShiftHeld(true);
+                isRunning = true;
+                animator.SetBool("isRunning", isRunning);
+                SetPlayerSpeed(sprintingSpeed);
+                staminaManager.ShiftHeld(true);
+                StartCoroutine(ChangeFOV(ThirdPersonCamera.GetComponent<CinemachineFreeLook>(), 50, 0.5f));
+            }
+            if (context.canceled && !context.performed)
+            {
 
+                isRunning = false;
+                animator.SetBool("isRunning", isRunning);
+                SetPlayerSpeed(walkingSpeed);
+                staminaManager.ShiftHeld(false);
+                StartCoroutine(ChangeFOV(ThirdPersonCamera.GetComponent<CinemachineFreeLook>(), 40, 0.5f));
+            }
         }
-        if (context.canceled && !context.performed)
-        {
-            isRunning = false;
-            //animator.SetBool("isRunning", isRunning);
-            SetPlayerSpeed(walkingSpeed);
-            staminaManager.ShiftHeld(false);
-        }
+
 
         //move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
+    }
+    bool IsJumpAnimationPlaying()
+    {
+        // Get the current state of the jump animation
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        // Check if the jump animation is playing
+        return stateInfo.IsName("Jumping"); // Replace "YourJumpAnimationName" with the actual name of your jump animation state
+    }
+    bool IsRunningJumpAnimationPlaying()
+    {
+        // Get the current state of the jump animation
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        // Check if the jump animation is playing
+        return stateInfo.IsName("Running Jump"); // Replace "YourJumpAnimationName" with the actual name of your jump animation state
+    }
+
+    //Example coroutine to reset isJumping after a delay(if animation event approach is not feasible)
+    IEnumerator ResetJumpFlagAfterDelay()
+    {
+        yield return new WaitForSeconds(1.517f);
+        hasJumped = false;
+        animator.SetBool("isJumping", hasJumped);
+    }
+    IEnumerator ResetRunningJumpFlagAfterDelay()
+    {
+        yield return new WaitForSeconds(0.867f);
+        hasJumped = false;
+        animator.SetBool("isRunningJump", false);
+    }
+    IEnumerator ChangeFOV(CinemachineFreeLook cam, float endFOV, float duration)
+    {
+
+        float startFOV = cam.m_Lens.FieldOfView;
+        float time = 0;
+        while (time < duration)
+        {
+            cam.m_Lens.FieldOfView = Mathf.Clamp(Mathf.Lerp(startFOV, endFOV, time / duration), 40, 50);
+            yield return null;
+            time += Time.deltaTime;
+        }
     }
     private void SetPlayerSpeed(float var)
     {
         playerVelocity = var;
     }
-    
+
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         Rigidbody body = hit.collider.attachedRigidbody;
@@ -490,12 +466,12 @@ public class Character : MonoBehaviour
         //for vehicle entry
         if (other.gameObject.name.Contains("Vehicle"))
         {
-            
+
         }
         //for enter/exit triggers
         if (other.gameObject.name.Contains("Exit") || other.gameObject.name.Contains("Enter") || other.gameObject.name.Contains("Climb"))
         {
-            if(teleportTrigger != other.gameObject.transform.GetChild(0).gameObject)
+            if (teleportTrigger != other.gameObject.transform.GetChild(0).gameObject)
             {
                 teleportTrigger = other.gameObject.transform.GetChild(0).gameObject;
             }
@@ -518,32 +494,32 @@ public class Character : MonoBehaviour
             other.gameObject.transform.GetChild(1).gameObject.SetActive(true);
             isOnTeleportZone = true;
         }
-        
-        
+
+
 
         if (other.gameObject.name.Contains("Placeable"))
         {
             isPlayerOnPlaceable = true;
 
         }
-        
+
         if (other.tag == "Hazard")
         {
             DataHub.PlayerStatus.damageTaken = 10;
             TakeDamage(DataHub.PlayerStatus.damageTaken);
             //call healthchange event
-            
+
             return;
         }
-        
-        
+
+
 
         //OBJECTIVE CONDITIONS
         if (other.gameObject.name == "Lobby")
         {
             DataHub.ObjectiveHelper.hasReachedLobby = true;
         }
-        if(other.gameObject.name == "LevelWall")
+        if (other.gameObject.name == "LevelWall")
         {
             DataHub.ObjectiveHelper.hasFoundLevel2Exit = true;
         }
@@ -562,7 +538,7 @@ public class Character : MonoBehaviour
         if (other.gameObject.name == "Telephone Booth")
         {
             DataHub.ObjectiveHelper.hasFoundTelephone = true;
-            
+
         }
         if (other.gameObject.name == "Higher Ground")
         {
@@ -623,10 +599,10 @@ public class Character : MonoBehaviour
             DataHub.TriggerInteracted.lastTriggerExited = other.gameObject.name;
             ExitTrigger.Invoke();
         }*/
-        
+
 
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         TakeDamageEvent.Invoke();
         Debug.Log("Player is hurt!");
@@ -643,7 +619,7 @@ public class Character : MonoBehaviour
     {
         objectsHeld.Add(obj);
     }
-    
+
     /*
      When player clicks e, for hold interactions, we grab the gameobject's name in the editor, then pass it to HoldObject().
      Ensure that we have a non empty object before adding to inventory. If it is an empty object, we are not holding anything, then return
@@ -657,7 +633,7 @@ public class Character : MonoBehaviour
         For example, we have a PlankPlaceable interaction in the first level and we need a Plank for it. The naming must be consistent. If we have ShortPlankPlaceable, we need ShortPlank for it.
 
  */
-    public void HoldObject(string objName,GameObject obj)
+    public void HoldObject(string objName, GameObject obj)
     {
         if (objName == "EmptyObj")
         {
@@ -690,12 +666,12 @@ public class Character : MonoBehaviour
             Debug.Log("No items to drop!");
             return;
         }
-        
+
 
 
         if (!isPlaced)
         {
-            
+
             GameObject obj = objectsHeld.Find(x => x.name == GetObjectHeld());
 
             //make object reappear beside player
@@ -705,10 +681,10 @@ public class Character : MonoBehaviour
             obj.transform.position = new Vector3(transform.position.x + 0.4f, transform.position.y, transform.position.z + 0.4f);
             objectsHeld.Remove(obj);
 
-            
+
         }
         //remove from inventory
-        
+
         inv.Remove(itemsArray.interactables.Find(item => item.displayName.Equals(objectHeld.Trim())));
         objectHeld = GetObjectHeld();
 
@@ -718,7 +694,7 @@ public class Character : MonoBehaviour
     {
         return inv.GetActiveItem();
     }
-    
+
     //called from ChangeInventoryFocusEvent 
     public void SetObjectHeld()
     {
@@ -732,8 +708,6 @@ public class Character : MonoBehaviour
     public void SetIsAllowedMovement(bool flag)
     {
         isAllowedMovement = flag;
-        isMoving = flag;
-        isRunning = flag;
     }
     private void BringPlayerBackToMap()
     {

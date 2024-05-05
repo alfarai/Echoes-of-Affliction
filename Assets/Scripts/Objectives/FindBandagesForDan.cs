@@ -10,7 +10,7 @@ public class FindBandagesForDan : IObjective
     private TextMeshProUGUI timerText;
     private float totalMinutes;
     private int wholeMinute, seconds;
-    public GameObject nextObjective, goalLabel;
+    public GameObject nextObjective, goalLabel, cutscene;
     private string label = "GOAL 11: Find bandages for Dan.";
     private bool isComplete;
     public override void AutoFinish()
@@ -21,20 +21,24 @@ public class FindBandagesForDan : IObjective
     public override void CallNextObjective()
     {
 
-        gameObject.SetActive(false);
-        nextObjective.SetActive(true);
+        cutscene.SetActive(true); //isCutscenePlaying is set to true here. Set to false after execution
+        if (!DataHub.PlayerStatus.isCutscenePlaying)
+        {
+            gameObject.SetActive(false);
+            nextObjective.SetActive(true);
+        }
     }
 
     public override void CompleteObjective()
     {
         isComplete = true;
-        label = "Goal completed!";
+        SetGoalText("Goal Completed!");
         Invoke("CallNextObjective", 5f);
     }
     private void ObjectiveFailed()
     {
         isComplete = true;
-        label = "Goal Failed!";
+        SetGoalText("Goal Failed!");
         Invoke("CallNextObjective", 5f);
     }
     
@@ -65,23 +69,29 @@ public class FindBandagesForDan : IObjective
         {
             AutoFinish();
         }
-        timer -= Time.deltaTime;
-        totalMinutes = timer / 60.0f;
-        wholeMinute = (int)totalMinutes;
-        seconds = (int)((totalMinutes - wholeMinute) * 60);
+        if (!isComplete)
+        {
+            timer -= Time.deltaTime;
+            totalMinutes = timer / 60.0f;
+            wholeMinute = (int)totalMinutes;
+            seconds = (int)((totalMinutes - wholeMinute) * 60);
+
+            if (seconds.ToString().Length == 1)
+            {
+                timerText.text = wholeMinute + ":0" + seconds;
+            }
+            else
+            {
+                timerText.text = wholeMinute + ":" + seconds;
+            }
+        }
         
-        if(seconds.ToString().Length == 1)
-        {
-            timerText.text = wholeMinute + ":0" + seconds;
-        }
-        else
-        {
-            timerText.text = wholeMinute + ":" + seconds;
-        }
         
         
         if (timer <= 0 && !isComplete)
         {
+            DataHub.ObjectiveHelper.hasFailedToGiveDanBandages = true;
+            timerObj.SetActive(false);
             ObjectiveFailed();
         }
 

@@ -4014,7 +4014,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 162981521}
-  m_LocalRotation: {x: 0.095627554, y: 0.7274535, z: -0.09708382, w: 0.6724891}
+  m_LocalRotation: {x: 0.09562756, y: 0.7274534, z: -0.097083814, w: 0.67248917}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -8738,8 +8738,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 34bb5b294a49cfd4ba35b43b7c495de6, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 0}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -14012,8 +14012,6 @@ MonoBehaviour:
   - {fileID: 1766711728}
   itemText: {fileID: 1655492066}
   playerObj: {fileID: 2106660159}
-  activeItem: {fileID: 21300000, guid: ce557511b761b1748a1b3b2f18dff63f, type: 3}
-  disabledItem: {fileID: 21300000, guid: 34bb5b294a49cfd4ba35b43b7c495de6, type: 3}
   healthBar: {fileID: 1982634999}
 --- !u!4 &608237273
 Transform:
@@ -23254,7 +23252,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 973966353}
-  m_LocalRotation: {x: -0.24060333, y: 0.03726892, z: -0.14846596, w: -0.95847744}
+  m_LocalRotation: {x: -0.24060331, y: 0.03726889, z: -0.14846595, w: -0.95847744}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -45558,8 +45556,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 34bb5b294a49cfd4ba35b43b7c495de6, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 0}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -47499,7 +47497,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1829078651}
-  m_LocalRotation: {x: 0.2431207, y: -0.00000003226983, z: 0.00000000808814, w: 0.9699961}
+  m_LocalRotation: {x: 0.24312069, y: 0.00000003754444, z: -0.000000009410172, w: 0.9699961}
   m_LocalPosition: {x: 146.88623, y: 55.544804, z: 9.040199}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -51997,7 +51995,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 34bb5b294a49cfd4ba35b43b7c495de6, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -56279,7 +56277,7 @@ MonoBehaviour:
   maxStamina: 1000
   currentStamina: 100
   staminaRegenRate: 1
-  runStaminaCost: 10
+  runStaminaCost: 0.5
   staminaBar: {fileID: 1992744877}
   barCanvas: {fileID: 361485563}
   progressStamina: {fileID: 1317656265}
