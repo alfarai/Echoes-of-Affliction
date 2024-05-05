@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class MainMenu : MonoBehaviour
 {
-    
+
+    public GameObject creditsPanel, settingsPanel;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +25,34 @@ public class MainMenu : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadSceneAsync("PersistentScene");
-        SceneManager.LoadSceneAsync("Level1",LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync("Main",LoadSceneMode.Additive);
     }
-    
+
+    public void OpenSettings()
+    {
+        creditsPanel.SetActive(false);
+        settingsPanel.SetActive(true);
+    }
+
+    public void CloseSettings()
+    {
+        settingsPanel.SetActive(false);
+    }
+
+    public void OpenCredits()
+    {
+        settingsPanel.SetActive(false);
+        creditsPanel.SetActive(true);
+    }
+
+    public void CloseCredits()
+    {
+        creditsPanel.SetActive(false);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
 }
