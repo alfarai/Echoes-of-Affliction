@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3521361631232505240}
   - component: {fileID: 1673813999182758226}
   - component: {fileID: 260126553418624995}
+  - component: {fileID: 3853100310183702220}
   m_Layer: 0
   m_Name: lamppost
   m_TagString: Untagged
@@ -29,7 +30,6 @@ Transform:
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -53,12 +53,10 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -83,7 +81,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &260126553418624995
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -97,3 +94,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.6427777, y: 2.974127, z: 0.6427777}
   m_Center: {x: 0, y: 1.4870635, z: 0.00000043213367}
+--- !u!54 &3853100310183702220
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881131606133366919}
+  serializedVersion: 2
+  m_Mass: 200
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

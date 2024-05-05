@@ -14,6 +14,7 @@ public class FlashInfo: MonoBehaviour
     }
     public IEnumerator FlashMessage(string msg,int time)
     {
+
         ShowPanel();
         info.text = msg;
         yield return new WaitForSeconds(time);
@@ -30,11 +31,19 @@ public class FlashInfo: MonoBehaviour
     } 
     public void ShowPanel()
     {
-        infoObj.SetActive(true);
+        if (!infoObj.activeInHierarchy)
+        {
+            infoObj.SetActive(true);
+        }
+        
     }
     public void HidePanel()
     {
-        infoObj.SetActive(false);
+        if (infoObj.activeInHierarchy)
+        {
+            infoObj.SetActive(false);
+        }
+        
     }
 
 }

@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
     public GameObject[] inventoryBorderSlots;
     public TextMeshProUGUI itemText;
     public GameObject playerObj;
-    public Sprite inactive, active; //png 
+    public Sprite inactive, active, emptyIcon; //png 
     private Inventory inv;
     private bool isUIShown = true;
 
@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         inv = playerObj.GetComponent<Inventory>();
-        //UpdateInventoryUI();
+        UpdateInventoryUI();
     }
 
     // Update is called once per frame
@@ -45,14 +45,14 @@ public class UIManager : MonoBehaviour
     }
     public void UpdateInventoryUI()
     {
-        string display = "";
         List<InventoryItem> inventory = inv.GetInventory();
         if (inventory.Count == 0)
         {
             for (int i = 0; i < DataHub.PlayerStatus.invSlots; i++)
             {
-                inventorySlots[i].GetComponent<Image>().sprite = null;
-                inventorySlots[i].GetComponent<Image>().color = new Color(0,0,0,0); //make it invisible
+                //Debug.Log("setting to empty");
+                inventorySlots[i].GetComponent<Image>().sprite = emptyIcon;
+                //inventorySlots[i].GetComponent<Image>().color = new Color(0,0,0,0); //make it invisible
             }
         }
         for (int i = 0; i < DataHub.PlayerStatus.invSlots; i++)
@@ -61,12 +61,12 @@ public class UIManager : MonoBehaviour
             try
             {
                 inventorySlots[i].GetComponent<Image>().sprite = inventory[i].GetIcon();
-                inventorySlots[i].GetComponent<Image>().color = new Color(0, 0, 0, 255);
+                //inventorySlots[i].GetComponent<Image>().color = new Color(0, 0, 0, 255);
             }
             catch
             {
-                inventorySlots[i].GetComponent<Image>().sprite = null;
-                inventorySlots[i].GetComponent<Image>().color = new Color(0, 0, 0, 0); //make it invisible
+                inventorySlots[i].GetComponent<Image>().sprite = emptyIcon;
+               // inventorySlots[i].GetComponent<Image>().color = new Color(0, 0, 0, 0); //make it invisible
             }
 
         }
