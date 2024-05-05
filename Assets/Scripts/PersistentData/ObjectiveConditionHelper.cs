@@ -39,6 +39,7 @@ public class ObjectiveConditionHelper
     //Objective 10
     public bool hasReachedToweringTwins;
     public bool hasTalkedWithDan;
+    public bool hasFinishedTalkingWithDan;
 
     //Objective 11
 

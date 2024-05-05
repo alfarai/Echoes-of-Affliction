@@ -16,7 +16,7 @@ public class Character : MonoBehaviour
     private Inventory inv;
     private ItemsArray itemsArray;
     private Vector3 place;
-    private bool hasClickedTPLocation;
+    private bool isBlackScreenEnabled;
 
     private RaycastHit hit;
 
@@ -61,6 +61,7 @@ public class Character : MonoBehaviour
     private GameObject RobModel;
     private bool canJump = true;
     public float jumpInterval = 1f;
+    public CanvasGroup blackScreenCanvas;
 
     private void Awake()
     {
@@ -246,7 +247,10 @@ public class Character : MonoBehaviour
         }
 
 
-
+        if (isBlackScreenEnabled)
+        {
+            blackScreenCanvas.alpha = Mathf.MoveTowards(blackScreenCanvas.alpha, 1, 0.8f * Time.deltaTime);
+        }
 
 
 
@@ -331,7 +335,14 @@ public class Character : MonoBehaviour
         if (isAllowedMovement)
             input = context.ReadValue<Vector2>();
         else
+        {
             input = Vector2.zero;
+            isWalking = false;
+            isRunning = false;
+            animator.SetBool("isWalking", isWalking);
+            animator.SetBool("isRunning", isRunning);
+        }
+            
         //  Debug.Log(input);
         move = new Vector3(input.x, 0, input.y).normalized;
 
@@ -400,7 +411,13 @@ public class Character : MonoBehaviour
         // Check if the jump animation is playing
         return stateInfo.IsName("Running Jump"); // Replace "YourJumpAnimationName" with the actual name of your jump animation state
     }
-
+    IEnumerator EnableBlackScreen()
+    {
+        isBlackScreenEnabled = true;
+        yield return new WaitForSeconds(3); //let black screen show for a few seconds
+        isBlackScreenEnabled = false;
+        blackScreenCanvas.alpha = 0f;
+    }
     //Example coroutine to reset isJumping after a delay(if animation event approach is not feasible)
     IEnumerator ResetJumpFlagAfterDelay()
     {
@@ -548,6 +565,7 @@ public class Character : MonoBehaviour
         if (other.gameObject.name == "Chopper")
         {
             DataHub.ObjectiveHelper.hasReachedChopper = true;
+            StartCoroutine(EnableBlackScreen());
         }
 
 
@@ -712,5 +730,17 @@ public class Character : MonoBehaviour
     private void BringPlayerBackToMap()
     {
         transform.position = new Vector3(transform.position.x, 4, transform.position.z);
+    }
+
+    //Disable/Enable of Cameras used for when game screens are shown (ex: death, pause)
+    public void DisableCameraRotation()
+    {
+        ThirdPersonCamera.GetComponent<CinemachineFreeLook>().m_XAxis.m_MaxSpeed = 0;
+        ThirdPersonCamera.GetComponent<CinemachineFreeLook>().m_YAxis.m_MaxSpeed = 0;
+    }
+    public void EnableCameraRotation()
+    {
+        ThirdPersonCamera.GetComponent<CinemachineFreeLook>().m_XAxis.m_MaxSpeed = 300; //default
+        ThirdPersonCamera.GetComponent<CinemachineFreeLook>().m_YAxis.m_MaxSpeed = 3; //default
     }
 }

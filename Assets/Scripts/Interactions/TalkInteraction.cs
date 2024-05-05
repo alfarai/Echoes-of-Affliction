@@ -21,12 +21,8 @@ public class TalkInteraction : MonoBehaviour, IInteractable
 
     public void Interact() 
     {
-        //disable interaction if player has failed
-        if (DataHub.ObjectiveHelper.hasFailedToGiveDanBandages)
-        {
-            return;
-        }
-        StartConversation();
+        
+        
         
 
  
@@ -44,10 +40,15 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         {
             DataHub.ObjectiveHelper.hasTalkedWithDan = true;
             DataHub.WorldEvents.hasFoundDan = true;
-            
-            
+            //disable interaction if player has failed or succeeded
+            if (DataHub.ObjectiveHelper.hasFailedToGiveDanBandages || DataHub.ObjectiveHelper.hasGivenDanBandages)
+            {
+                return;
+            }
+
         }
-        
+        StartConversation();
+
 
     }
     private void StartConversation()
@@ -64,7 +65,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         {
             speakerCam.enabled = true;
         }
-        if (player.GetObjectHeld().Trim().Equals("Bandage"))
+        if (player.GetObjectHeld().Trim().Equals("Bandage") && DataHub.ObjectiveHelper.hasFinishedTalkingWithDan)
         {
             DataHub.ObjectiveHelper.hasGivenDanBandages = true;
             player.DropObjectHeld(true);
@@ -75,8 +76,11 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     }
     private void EndConversation()
     {
-
-        if (gameObject.name == "Phone")
+        if (gameObject.name == "Dan")
+        {
+            DataHub.ObjectiveHelper.hasFinishedTalkingWithDan = true;
+        }
+            if (gameObject.name == "Phone")
         {
             DataHub.ObjectiveHelper.hasFinishedCallingDan = true;
         }

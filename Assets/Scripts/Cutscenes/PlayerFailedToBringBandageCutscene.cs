@@ -22,11 +22,10 @@ public class PlayerFailedToBringBandageCutscene : MonoBehaviour
     IEnumerator Cutscene()
     {
         DataHub.PlayerStatus.isCutscenePlaying = true;
-        flash = GameObject.Find("FlashMessager").GetComponent<FlashInfo>();
         player.SetIsAllowedMovement(false);
         cam.SetActive(true);
         dialogueTextObj.SetActive(true);
-        flash.ShowPanel();
+       
 
         dialogueText.text = "*Grunts in pain* I think I can't hold on anymore...";
         yield return new WaitForSeconds(3.5f);
@@ -52,15 +51,14 @@ public class PlayerFailedToBringBandageCutscene : MonoBehaviour
         //isBlackScreenEnabled = true;
 
         isBlackScreenEnabled = true;
-        yield return new WaitForSeconds(2); 
+        yield return new WaitForSeconds(2); //let black screen show for a few seconds
         isBlackScreenEnabled = false;
-        blackScreenCanvas.gameObject.SetActive(false);
+        blackScreenCanvas.alpha = 0f;
 
 
         cam2.SetActive(false);
 
         yield return new WaitForSeconds(2);
-        flash.HidePanel();
         cam.SetActive(false);
         player.SetIsAllowedMovement(true);
         DataHub.PlayerStatus.isCutscenePlaying = false;
@@ -71,7 +69,6 @@ public class PlayerFailedToBringBandageCutscene : MonoBehaviour
         if (isBlackScreenEnabled)
         {
             blackScreenCanvas.alpha = Mathf.MoveTowards(blackScreenCanvas.alpha, 1, 1.0f * Time.deltaTime);
-
         }
     }
 

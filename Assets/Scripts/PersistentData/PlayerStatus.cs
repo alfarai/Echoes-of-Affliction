@@ -17,4 +17,7 @@ public class PlayerStatus
     public bool isAlive;
     public bool isTalking;
     public bool isCutscenePlaying;
+
+    public Vector3 gameSpawn;
+    public Vector3 respawnPoint;
 }

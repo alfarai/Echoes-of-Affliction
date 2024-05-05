@@ -18,7 +18,7 @@ public class FindBandagesForDan : IObjective
         CallNextObjective();
     }
 
-    public override void CallNextObjective()
+    public void CallNextObjectiveOnFail()
     {
 
         cutscene.SetActive(true); //isCutscenePlaying is set to true here. Set to false after execution
@@ -27,6 +27,11 @@ public class FindBandagesForDan : IObjective
             gameObject.SetActive(false);
             nextObjective.SetActive(true);
         }
+    }
+    public override void CallNextObjective()
+    {
+        gameObject.SetActive(false);
+        nextObjective.SetActive(true);
     }
 
     public override void CompleteObjective()
@@ -39,7 +44,7 @@ public class FindBandagesForDan : IObjective
     {
         isComplete = true;
         SetGoalText("Goal Failed!");
-        Invoke("CallNextObjective", 5f);
+        Invoke("CallNextObjectiveOnFail", 5f);
     }
     
     
@@ -69,7 +74,7 @@ public class FindBandagesForDan : IObjective
         {
             AutoFinish();
         }
-        if (!isComplete)
+        if (!isComplete && DataHub.ObjectiveHelper.hasFinishedTalkingWithDan)
         {
             timer -= Time.deltaTime;
             totalMinutes = timer / 60.0f;
@@ -88,7 +93,7 @@ public class FindBandagesForDan : IObjective
         
         
         
-        if (timer <= 0 && !isComplete)
+        if (timer <= 0 && !isComplete && !DataHub.ObjectiveHelper.hasGivenDanBandages)
         {
             DataHub.ObjectiveHelper.hasFailedToGiveDanBandages = true;
             timerObj.SetActive(false);

@@ -57,27 +57,7 @@ public class UIManager : MonoBehaviour
         }
         for (int i = 0; i < DataHub.PlayerStatus.invSlots; i++)
         {
-
-            //Debug.Log(inventory[i].GetItemDataName());
-            try
-            {
-                display = inventory[i].GetItemDataName();
-                if (display == null)
-                {
-                    display = "";
-                }
-                itemText.text = display;
-            }
-            catch //if inventory slot is empty
-            {
-                display = "";
-                itemText.text = display;
-            }
-
-
-
             //inventorySlots[i].GetComponentInChildren<TextMeshProUGUI>().text = display;
-
             try
             {
                 inventorySlots[i].GetComponent<Image>().sprite = inventory[i].GetIcon();
@@ -96,11 +76,26 @@ public class UIManager : MonoBehaviour
     //focused events are triggered through scrolling or when adding to inv
     public void UpdateFocusedInventoryUI()
     {
+        List<InventoryItem> inventory = inv.GetInventory();
+
         for (int i = 0; i < DataHub.PlayerStatus.invSlots; i++)
         {
             inventoryBorderSlots[i].GetComponent<Image>().sprite = inactive;
         }
-
+        //update border of focused slot
         inventoryBorderSlots[DataHub.PlayerStatus.focusedSlot].GetComponent<Image>().sprite = active;
+
+        //check if there is an index out of range exception (meaning that the focused slot is empty)
+        try
+        {
+            //show display name of focused item
+            itemText.text = inventory[DataHub.PlayerStatus.focusedSlot].GetItemDataName();
+        }
+        catch
+        {
+            itemText.text = "";
+        }
+        
+        //itemText.text = inventory
     }
 }
