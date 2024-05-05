@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 4
   displayName: Sledgehammer
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a28a7f7936e85744483270aeb5f08514, type: 3}
   isDuplicable: 0
