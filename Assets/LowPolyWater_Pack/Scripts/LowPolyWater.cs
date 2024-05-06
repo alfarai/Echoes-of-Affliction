@@ -23,7 +23,7 @@ namespace LowPolyWater
         {
             if (level == 1) //set on first aftershock
             {
-                targetY = 0.3f;
+                targetY = 0.2f;
                 waveHeight = 0.3f;
                 waveFrequency = 0.15f;
                 waveLength = 40f;
@@ -32,7 +32,7 @@ namespace LowPolyWater
             }
             if (level == 2) //set when find bandages for dan objective is active
             {
-                targetY = 5.2f;
+                targetY = 1f;
                 waveHeight = 0.8f;
                 waveFrequency = 0.17f;
                 waveLength = 40f;
@@ -41,7 +41,7 @@ namespace LowPolyWater
             }
             if (level == 3) //set after completing find bandages for dan objective 
             {
-                targetY = 10f;
+                targetY = 5.5f;
                 waveHeight = 1.5f;
                 waveFrequency = 0.2f;
                 waveLength = 40f;

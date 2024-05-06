@@ -29,10 +29,14 @@ public abstract class IEvent : MonoBehaviour
                
             }
 
-            // Destroy the object since the trigger should happen only once
-            Destroy(gameObject);
+            Invoke("DestroyObject", 5f);
         }
         
+    }
+    private void DestroyObject()
+    {
+        // Destroy the object since the trigger should happen only once
+        Destroy(gameObject);
     }
 
 }

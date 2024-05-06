@@ -57,11 +57,14 @@ public class Character : MonoBehaviour
     private GameObject car;
     private float elapsed, timeSinceLastJump;
     public List<AudioClip> feet;
+    public AudioClip hurt, dead;
+    //public AudioClip outOfBreath;
     private AudioSource playerAudioSource;
     private GameObject RobModel;
-    private bool canJump = true;
+    private bool canJump = true, isCameraFocused, canPlayOutOfBreath;
     public float jumpInterval = 1f;
     public CanvasGroup blackScreenCanvas;
+    private FlashInfo flash;
 
     private void Awake()
     {
@@ -71,6 +74,7 @@ public class Character : MonoBehaviour
 
     void Start()
     {
+        flash = GameObject.Find("FlashMessager").GetComponent<FlashInfo>();
         //animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
         //hpScript = hpObj.GetComponent<UpdateHP>();
@@ -114,6 +118,7 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+
         timeSinceLastJump += Time.deltaTime;
         if(timeSinceLastJump >= jumpInterval)
         {
@@ -168,16 +173,18 @@ public class Character : MonoBehaviour
         //for camera fov change when running
 
         //zoom in
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && !isInVehicle)
         {
             ThirdPersonCamera.SetActive(false);
             FocusCamera.SetActive(true);
+            isCameraFocused = true;
         }
         //zoom out
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(1) && !isInVehicle)
         {
             ThirdPersonCamera.SetActive(true);
             FocusCamera.SetActive(false);
+            isCameraFocused = true;
         }
 
         if (Input.GetKeyDown(KeyCode.F))
@@ -246,6 +253,18 @@ public class Character : MonoBehaviour
             }
         }
 
+        /*//sound to play if player is about to run out of stamina
+        //this ensures that it only plays once when player stamina is <50
+        if (staminaManager.isStaminaHalfway() && canPlayOutOfBreath)
+        {
+            PlayOutOfBreath();
+            canPlayOutOfBreath = false;
+        }
+        if (staminaManager.isStaminaMoreThanHalf())
+        {
+            canPlayOutOfBreath = true;
+        }*/
+
 
         if (isBlackScreenEnabled)
         {
@@ -262,7 +281,18 @@ public class Character : MonoBehaviour
         playerAudioSource.PlayOneShot(feet[UnityEngine.Random.Range(0, feet.Count)]);
 
     }
-
+    private void PlayOutOfBreath()
+    {
+        //playerAudioSource.PlayOneShot(outOfBreath);
+    }
+    public void PlayHurt()
+    {
+        playerAudioSource.PlayOneShot(hurt);
+    }
+    public void PlayDead()
+    {
+        playerAudioSource.PlayOneShot(dead);
+    }
 
 
     private void ApplyRotationAndMovement()
@@ -413,10 +443,13 @@ public class Character : MonoBehaviour
     }
     IEnumerator EnableBlackScreen()
     {
+        SetIsAllowedMovement(false);
+        DataHub.PlayerStatus.isCutscenePlaying = true;
         isBlackScreenEnabled = true;
-        yield return new WaitForSeconds(3); //let black screen show for a few seconds
-        isBlackScreenEnabled = false;
-        blackScreenCanvas.alpha = 0f;
+        yield return new WaitForSeconds(8); //let black screen show for a few seconds
+        //show main menu
+        /*isBlackScreenEnabled = false;
+        blackScreenCanvas.alpha = 0f;*/
     }
     //Example coroutine to reset isJumping after a delay(if animation event approach is not feasible)
     IEnumerator ResetJumpFlagAfterDelay()
@@ -527,6 +560,15 @@ public class Character : MonoBehaviour
             //call healthchange event
 
             return;
+        }
+        if(other.name == "NPC Talk Instruction")
+        {
+            StartCoroutine(flash.FlashMessage("You can interact with strangers by pressing E on them.", 5));
+            other.gameObject.SetActive(false);
+        }
+        if(other.name == "PlayFirstBG")
+        {
+            audio.PlayMusic(audio.bg1);
         }
 
 
@@ -668,7 +710,7 @@ public class Character : MonoBehaviour
             obj.SetActive(false);
         }
         objectHeld = GetObjectHeld();
-
+        audio.PlaySFX(audio.itemHold);
 
 
 
@@ -742,5 +784,9 @@ public class Character : MonoBehaviour
     {
         ThirdPersonCamera.GetComponent<CinemachineFreeLook>().m_XAxis.m_MaxSpeed = 300; //default
         ThirdPersonCamera.GetComponent<CinemachineFreeLook>().m_YAxis.m_MaxSpeed = 3; //default
+    }
+    public bool GetIsCameraFocused()
+    {
+        return isCameraFocused;
     }
 }

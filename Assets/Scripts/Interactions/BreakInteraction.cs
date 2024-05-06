@@ -17,6 +17,7 @@ public class BreakInteraction : MonoBehaviour, IInteractable
     private Vector3 labelPos;
     private bool canHit = true, isOutlineActive;
     private FlashInfo flash;
+    private AudioManager audio;
     public void Interact()
     {
         
@@ -38,6 +39,7 @@ public class BreakInteraction : MonoBehaviour, IInteractable
             }
             if (canHit)
             {
+                audio.PlaySFX(audio.itemBreak);
                 --hitsBeforeBreaking;
                 elapsedTimeSinceLastHit = 0;
 
@@ -73,7 +75,8 @@ public class BreakInteraction : MonoBehaviour, IInteractable
         labelPos = transform.position;
         labelPos.y -= 1.1f;
         player = GameObject.Find("Player").GetComponent<Character>();
-        
+        audio = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+
     }
     void Update()
     {

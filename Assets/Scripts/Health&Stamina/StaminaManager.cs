@@ -72,7 +72,7 @@ public class StaminaManager : MonoBehaviour
         {
             barCanvasGroup.alpha = Mathf.MoveTowards(barCanvasGroup.alpha, 1, 2.0f * Time.deltaTime);
         }
-        
+
         
         
 
@@ -113,7 +113,14 @@ public class StaminaManager : MonoBehaviour
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
 
     }
-
+    public bool isStaminaHalfway()
+    {
+        return currentStamina <= 50;
+    }
+    public bool isStaminaMoreThanHalf()
+    {
+        return currentStamina > 50;
+    }
     private void UpdateStaminaBar()
     {
         progressStamina.fillAmount = currentStamina / 100f;

@@ -5,9 +5,11 @@ using TMPro;
 
 public class GetToTheChopper : IObjective
 {
+    private AudioManager audio;
     public GameObject nextObjective, goalLabel;
     private string label = "GOAL 12: Get to the chopper!";
     private bool isComplete;
+    private FlashInfo flash;
     public override void AutoFinish()
     {
         CallNextObjective();
@@ -37,7 +39,9 @@ public class GetToTheChopper : IObjective
     // Start is called before the first frame update
     void Start()
     {
-
+        flash = GameObject.Find("FlashMessager").GetComponent<FlashInfo>();
+        audio.PlayMusic(audio.bg2);
+        StartCoroutine(flash.FlashMessage("The rescue chopper is at the outskirts of the city.", 5));
     }
 
     // Update is called once per frame
@@ -55,6 +59,7 @@ public class GetToTheChopper : IObjective
     void Awake()
     {
         SetGoalText(label);
+        audio = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
     public override void SetGoalText(string label)
     {

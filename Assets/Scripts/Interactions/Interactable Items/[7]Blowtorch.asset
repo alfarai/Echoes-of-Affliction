@@ -15,4 +15,4 @@ MonoBehaviour:
   id: 7
   displayName: Blowtorch
   icon: {fileID: 21300000, guid: 4eb620feb9a9fc149b2d52ed35108681, type: 3}
-  isDuplicable: 0
+  isDuplicable: 1

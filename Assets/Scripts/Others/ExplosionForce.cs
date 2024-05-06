@@ -5,6 +5,7 @@ using System.Linq;
 
 public class ExplosionForce : MonoBehaviour
 {
+    private AudioManager audio;
     public GameObject explosion;
     private bool isThereHeatNearby,hasExploded;
     
@@ -15,7 +16,7 @@ public class ExplosionForce : MonoBehaviour
 
     void Start()
     {
-        
+        audio = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -87,9 +88,11 @@ public class ExplosionForce : MonoBehaviour
                 if (!hasExploded)
                 {
                     Object.Instantiate(explosion, transform.position, transform.rotation);
+
                 }
                 //Debug.Log(hit.gameObject.name);
                 rb.AddExplosionForce(power * 1000, explosionPos, radius, 3.0F);
+                audio.PlaySFX(audio.explosion);
                 hasExploded = true;
                 //gameObject.transform.GetChild(0).gameObject.SetActive(true); //play explode
 

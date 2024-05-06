@@ -19,5 +19,5 @@ public class PlayerStatus
     public bool isCutscenePlaying;
 
     public Vector3 gameSpawn;
-    public Vector3 respawnPoint;
+    public Transform respawnPoint = GameObject.Find("Respawn Point").transform;
 }

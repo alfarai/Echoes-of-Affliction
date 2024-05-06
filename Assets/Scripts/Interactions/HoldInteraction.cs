@@ -36,10 +36,18 @@ public class HoldInteraction : MonoBehaviour, IInteractable
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
     }
 
+    void FixedUpdate()
+    {
+        if (labelPos != transform.position)
+        {
+            labelPos = transform.position;
+        }
+        
+    }
     // Update is called once per frame
     void Update()
     {
-        
+       
     }
     
     public void InstantiateLabel()

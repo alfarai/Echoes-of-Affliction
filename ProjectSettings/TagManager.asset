@@ -14,6 +14,8 @@ TagManager:
   - Hazard
   - ObjectiveRequirement
   - Holdable
+  - Car
+  - Phone
   layers:
   - Default
   - TransparentFX

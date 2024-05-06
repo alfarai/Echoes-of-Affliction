@@ -18,26 +18,28 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     private Vector3 labelPos;
     public GameObject tooltipPrefab;
     private GameObject clone;
+    private AudioManager audio;
 
-    public void Interact() 
+    public void Interact()
     {
-        
-        
-        
 
- 
 
-        if(gameObject.name == "Marshall")
+
+
+
+
+        if (gameObject.name == "Tyrone")
         {
             DataHub.ObjectiveHelper.hasTalkedWithMarshall = true;
-        } 
-        if(gameObject.name == "Young Boy")
+        }
+        if (gameObject.name == "Ping")
         {
             DataHub.ObjectiveHelper.hasTalkedWithYoungBoy = true;
-            
+
         }
         if (gameObject.name == "Dan")
         {
+            //gameObject.transform.LookAt(player.transform);
             DataHub.ObjectiveHelper.hasTalkedWithDan = true;
             DataHub.WorldEvents.hasFoundDan = true;
             //disable interaction if player has failed or succeeded
@@ -46,6 +48,10 @@ public class TalkInteraction : MonoBehaviour, IInteractable
                 return;
             }
 
+        }
+        if(gameObject.tag == "Phone")
+        {
+            audio.PlaySFX(audio.phone);
         }
         StartConversation();
 
@@ -80,7 +86,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
         {
             DataHub.ObjectiveHelper.hasFinishedTalkingWithDan = true;
         }
-            if (gameObject.name == "Phone")
+        if (gameObject.name == "Phone")
         {
             DataHub.ObjectiveHelper.hasFinishedCallingDan = true;
         }
@@ -98,6 +104,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
     // Start is called before the first frame update
     void Start()
     {
+        audio = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
         labelPos = transform.position;
         labelPos.y += 1.2f;
@@ -120,7 +127,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
                 {
                     Talk(dialogue[0]);
                 }
-                
+
                 //if dialogue controller finished showing text
                 if (dialogueController.GetHasEndedConversation())
                 {
@@ -129,7 +136,7 @@ public class TalkInteraction : MonoBehaviour, IInteractable
                 }
             }
         }
-        
+
     }
 
     public void InstantiateLabel()

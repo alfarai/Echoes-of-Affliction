@@ -6,7 +6,7 @@ using TMPro;
 public class FindAPhone : IObjective
 {
     public GameObject nextObjective, goalLabel;
-    private string label = "GOAL 8: Find a a telephone booth to call Dan";
+    private string label = "GOAL 8: Find a telephone booth to call Dan.";
     private bool isComplete;
     public override void AutoFinish()
     {

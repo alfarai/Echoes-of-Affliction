@@ -6,7 +6,7 @@ using TMPro;
 public class FindACar : IObjective
 {
     public GameObject nextObjective, cutscene, goalLabel;
-    private string label = "GOAL 4: Find a car.";
+    private string label = "GOAL 4: Find your red car.";
     private bool isComplete;
     public override void AutoFinish()
     {

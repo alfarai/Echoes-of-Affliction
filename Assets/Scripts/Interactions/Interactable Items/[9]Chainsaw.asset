@@ -15,4 +15,4 @@ MonoBehaviour:
   id: 9
   displayName: Chainsaw
   icon: {fileID: 21300000, guid: d111ecf3695db8d4fbb2d3257d5614af, type: 3}
-  isDuplicable: 0
+  isDuplicable: 1

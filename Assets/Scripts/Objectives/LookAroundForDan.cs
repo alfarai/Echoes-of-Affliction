@@ -4,8 +4,9 @@ using UnityEngine;
 using TMPro;
 public class LookAroundForDan : IObjective
 {
+    private AudioManager audio;
     public GameObject nextObjective, goalLabel;
-    private string label = "GOAL 7: Look around for Dan.";
+    private string label = "GOAL 7: Ask people around for Dan.";
     private bool isComplete;
     public override void AutoFinish()
     {
@@ -35,7 +36,7 @@ public class LookAroundForDan : IObjective
     // Start is called before the first frame update
     void Start()
     {
-
+        audio.PlayMusic(audio.bg3);
     }
 
     // Update is called once per frame
@@ -55,6 +56,7 @@ public class LookAroundForDan : IObjective
     void Awake()
     {
         SetGoalText(label);
+        audio = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
     public override void SetGoalText(string label)
     {

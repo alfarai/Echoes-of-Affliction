@@ -10,7 +10,7 @@ public class HealthManager: MonoBehaviour
     public CanvasGroup deathScreen;
     public float maxHealth = 100;
     private float currentHealth;
-    private bool isDeathScreenEnabled, isDeathScreenShowing, isPlayerRevived;
+    private bool isDeathScreenEnabled, isDeathScreenShowing, isPlayerRevived, isPlayerAtRespawnPoint;
     private Character player;
 
     
@@ -37,6 +37,7 @@ public class HealthManager: MonoBehaviour
     public void TakeDamage()
     {
         //Debug.Log("ouch");
+        player.PlayHurt();
         currentHealth -= DataHub.PlayerStatus.damageTaken;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
@@ -46,6 +47,7 @@ public class HealthManager: MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            player.PlayDead();
             Die();
             //Debug.Log("player died");
             //invoke death event
@@ -75,6 +77,8 @@ public class HealthManager: MonoBehaviour
         //init health
         HealthUIChangeEvent.Invoke();
         player.SetIsAllowedMovement(true);
+
+        
     }
     private float GetCurrentHealth()
     {
@@ -94,8 +98,17 @@ public class HealthManager: MonoBehaviour
         {
             isDeathScreenShowing = true;
         }
+        
+    }
+    void FixedUpdate()
+    {
         if (isPlayerRevived)
         {
+            if (player.transform.position != DataHub.PlayerStatus.respawnPoint.position && !isPlayerAtRespawnPoint)
+            {
+                player.transform.position = DataHub.PlayerStatus.respawnPoint.position;
+                isPlayerAtRespawnPoint = true;
+            }
             //off variables for showing death screen
             isDeathScreenEnabled = false;
             isDeathScreenShowing = false;
@@ -104,6 +117,8 @@ public class HealthManager: MonoBehaviour
             //load respawn point
             Debug.Log("respawn player");
             isPlayerRevived = false;
+
+
         }
     }
 

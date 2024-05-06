@@ -12,12 +12,18 @@ public class AudioManager : MonoBehaviour
     public AudioClip bg1;
     public AudioClip bg2;
     public AudioClip bg3;
+
+    public AudioClip explosion;
+    public AudioClip rumble;
+    public AudioClip itemHold;
+    public AudioClip itemBreak;
+    public AudioClip phone;
+
     
     // Start is called before the first frame update
     void Start()
     {
-        musicSource.clip = bg1;
-        musicSource.Play();
+
     }
 
     // Update is called once per frame
@@ -29,6 +35,11 @@ public class AudioManager : MonoBehaviour
     {
         return clips.Find(x => x.name.Equals(clip));
     }*/
+    public void PlayMusic(AudioClip clip)
+    {
+        musicSource.clip = clip;
+        musicSource.Play();
+    }
     public void PlaySFX(AudioClip clip)
     {
         sfxSource.PlayOneShot(clip);

@@ -5,8 +5,9 @@ using TMPro;
 public class GoToToweringTwins : IObjective
 {
     public GameObject nextObjective, goalLabel;
-    private string label = "GOAL 10: Go to the Towering Twins building and find Dan";
+    private string label = "GOAL 10: Go to the Towering Twins to save Dan!";
     private bool isComplete;
+    private FlashInfo flash;
     public override void AutoFinish()
     {
         CallNextObjective();
@@ -36,6 +37,7 @@ public class GoToToweringTwins : IObjective
     // Start is called before the first frame update
     void Start()
     {
+        StartCoroutine(flash.FlashMessage("The Towering Twins is identified by two identical buildings next to each other.", 5));
 
     }
 
@@ -54,6 +56,7 @@ public class GoToToweringTwins : IObjective
     void Awake()
     {
         SetGoalText(label);
+        flash = GameObject.Find("FlashMessager").GetComponent<FlashInfo>();
     }
     public override void SetGoalText(string label)
     {

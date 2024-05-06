@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d576b64356b56414793ccd6a6b3c946c, type: 3}
+  m_Name: PingDialogue
+  m_EditorClassIdentifier: 
+  speaker: Young Boy
+  paragraphs:
+  - "Ping: N\u01D0 h\u01CEo!  There was a huge shaking earlier! It really scared
+    me!"
+  - 'Ping: Have you seen my mother? She told me to go here if I''m alone at home
+    and everything starts to shake...'
+  - 'Ping: There''s a really strong telephone booth near our house. No matter what
+    happens, it just doesn''t seem to break!'
+  - 'Ping: I''m sure I can use that to contact my mother...'
