@@ -45,6 +45,7 @@ public class ConditionSetter : MonoBehaviour
         {
             case "PlaceablePlank":
                 Debug.Log("A plank was placed!");
+                GameObject.Find("BarrierForPlaceablePlank").SetActive(false);
                 break;
             case "PlaceableKeys":
                 DataHub.ObjectiveHelper.hasKeyBeenPlaced = true;

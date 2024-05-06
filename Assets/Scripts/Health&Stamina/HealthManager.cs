@@ -12,14 +12,15 @@ public class HealthManager: MonoBehaviour
     private float currentHealth;
     private bool isDeathScreenEnabled, isDeathScreenShowing, isPlayerRevived, isPlayerAtRespawnPoint;
     private Character player;
+    private Transform respawnPoint;
 
-    
     public UnityEvent HealthUIChangeEvent;
     
 
 
     private void Start()
     {
+        respawnPoint = GameObject.Find("Respawn Point").transform;
         player = GameObject.Find("Player").GetComponent<Character>();
         //set max health
         DataHub.PlayerStatus.maxHealth = maxHealth;
@@ -104,9 +105,9 @@ public class HealthManager: MonoBehaviour
     {
         if (isPlayerRevived)
         {
-            if (player.transform.position != DataHub.PlayerStatus.respawnPoint.position && !isPlayerAtRespawnPoint)
+            if (player.transform.position != respawnPoint.position && !isPlayerAtRespawnPoint)
             {
-                player.transform.position = DataHub.PlayerStatus.respawnPoint.position;
+                player.transform.position = respawnPoint.position;
                 isPlayerAtRespawnPoint = true;
             }
             //off variables for showing death screen
@@ -120,6 +121,10 @@ public class HealthManager: MonoBehaviour
 
 
         }
+    }
+    public void BackToMenu()
+    {
+        SceneManager.LoadSceneAsync("MainMenu");
     }
 
 }

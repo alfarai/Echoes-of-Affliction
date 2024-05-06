@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using System;
 using UnityEngine.Events;
 using Cinemachine;
+using UnityEngine.SceneManagement;
 
 
 public class Character : MonoBehaviour
@@ -446,8 +447,9 @@ public class Character : MonoBehaviour
         SetIsAllowedMovement(false);
         DataHub.PlayerStatus.isCutscenePlaying = true;
         isBlackScreenEnabled = true;
-        yield return new WaitForSeconds(8); //let black screen show for a few seconds
+        yield return new WaitForSeconds(6); //let black screen show for a few seconds
         //show main menu
+        SceneManager.LoadSceneAsync("MainMenu");
         /*isBlackScreenEnabled = false;
         blackScreenCanvas.alpha = 0f;*/
     }
@@ -569,6 +571,11 @@ public class Character : MonoBehaviour
         if(other.name == "PlayFirstBG")
         {
             audio.PlayMusic(audio.bg1);
+        }
+        if(other.name == "Chainsaw Tree Helper")
+        {
+            StartCoroutine(flash.FlashMessage("You can break down the fallen trees with a chainsaw.", 5));
+            other.gameObject.SetActive(false);
         }
 
 

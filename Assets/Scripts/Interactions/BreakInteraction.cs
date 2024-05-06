@@ -97,7 +97,8 @@ public class BreakInteraction : MonoBehaviour, IInteractable
     public void InstantiateLabel()
     {
         clone = Instantiate(tooltipPrefab, labelPos, Quaternion.identity);
-        clone.GetComponentInChildren<TextMesh>().text = "Break";
+        clone.GetComponentInChildren<TextMesh>().text = "Broken by " + gameObject.name.Substring(0, gameObject.name.IndexOf(" "));
+        clone.GetComponentInChildren<TextMesh>().fontSize = 200;
 
     }
     public void DestroyLabel()

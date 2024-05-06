@@ -8,9 +8,16 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
 
-    public GameObject creditsPanel, settingsPanel;
+    public CanvasGroup menuCanvas;
+    public Toggle lowToggle, medToggle, highToggle;
+    private bool isStarted;
 
-
+    void Awake()
+    {
+        DataHub.PlayerStatus.GameNotLoaded = true;
+        Cursor.lockState = CursorLockMode.Confined;
+        
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -20,39 +27,47 @@ public class MainMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isStarted)
+        {
+            menuCanvas.alpha = Mathf.MoveTowards(menuCanvas.alpha, 0, 0.8f * Time.deltaTime);
+        }
+        if(menuCanvas.alpha == 0)
+        {
+            isStarted = false;
+        }
         
     }
     public void StartGame()
     {
-        SceneManager.LoadSceneAsync("PersistentScene");
-        SceneManager.LoadSceneAsync("Main",LoadSceneMode.Additive);
+        isStarted = true;
+        SceneManager.LoadSceneAsync("Main");
     }
 
-    public void OpenSettings()
-    {
-        creditsPanel.SetActive(false);
-        settingsPanel.SetActive(true);
-    }
-
-    public void CloseSettings()
-    {
-        settingsPanel.SetActive(false);
-    }
-
-    public void OpenCredits()
-    {
-        settingsPanel.SetActive(false);
-        creditsPanel.SetActive(true);
-    }
-
-    public void CloseCredits()
-    {
-        creditsPanel.SetActive(false);
-    }
+   
 
     public void QuitGame()
     {
         Application.Quit();
     }
+
+    public void ApplyQuality()
+    {
+        if (lowToggle.isOn)
+        {
+            QualitySettings.SetQualityLevel(1, true);
+            
+        }
+        if (medToggle.isOn)
+        {
+            QualitySettings.SetQualityLevel(3, true);
+            
+        }
+        if (highToggle.isOn)
+        {
+            QualitySettings.SetQualityLevel(5, true);
+        }
+
+    }
+
 
 }
